@@ -8,4 +8,6 @@
 # -------------------------------------------
 
 
-
+# Exercise 1
+# How many times did it occur in the trial, that exactly two 6s were rolled after each other?
+# For example, in sequence 56611166626634416 it occurred twice, that exactly two 6s were thrown after each other.
