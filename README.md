@@ -1,2 +1,2 @@
-# Python_Practices
-Standart algoritm tasks
+# Python_Practicesa
+Algorithm tasks
