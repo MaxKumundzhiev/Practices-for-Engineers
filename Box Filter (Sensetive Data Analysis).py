@@ -67,14 +67,42 @@ def _run_box_filter(gray_image, filter_size):
     plt.title ('Outpit Image --> Filtered Image')
     plt.imshow (output_image, cmap='gray')
     plt.show (block=True)
-    print ('Input image matrix: ', '\n', input_image, '\n', 'Output image matrix: ', '\n', output_image, '\n', 'Time: ',
-           stop - start, )
-
-
-#Check for one occure
-_run_box_filter(open_img(os.path.join(path, list_of_png[28])), 4)
+    print ('FAST BOX FILTER', '\n', 'Input image matrix: ', '\n', input_image, '\n', 'Output image matrix: ', '\n', output_image, '\n', 'Time: ', stop - start)
 
 
 # #Check for all occures (images)
 # for image in list_of_png:
 #     _run_box_filter(open_img(os.path.join(path, image)), 3)
+
+
+def compute_window_mean_and_var(image, window_w, window_h):
+    start = timeit.default_timer ()
+    w, h = image.shape
+    w_new, h_new = w - window_w + 1, h - window_h + 1
+    means = np.zeros ([w_new, h_new])
+    maximums = np.zeros ([w_new, h_new])
+    variations = np.zeros ([w_new, h_new])
+    for i in range (w_new):
+        for j in range (h_new):
+            window = image[i:i + window_w, j:j + window_h]
+            means[i, j] = np.mean (window)
+            maximums[i, j] = np.max (window)
+            variations[i, j] = np.var (window)
+    stop = timeit.default_timer ()
+    f = plt.figure (figsize=(10, 12))
+    f.add_subplot (1, 2, 1)
+    plt.title ('Input Image --> Original Image')
+    plt.imshow (image, cmap='gray')
+    f.add_subplot (1, 2, 2)
+    plt.title ('Outpit Image --> Filtered Image')
+    plt.imshow (means, cmap='gray')
+    plt.show (block=True)
+    print ('SIMPLE BOX FILTER', '\n', 'Input image matrix: ', '\n', image, '\n', 'Output image matrix: ', '\n', means, '\n',  'Time: ', stop - start)
+    return means
+
+
+#Check for one occure --> Fast Box Filter
+_run_box_filter(open_img(os.path.join(path, list_of_png[32])), 3)
+
+#Check for one occure --> Simple Box Filter (Mean Filter)
+compute_window_mean_and_var (open_img (os.path.join (path, list_of_png[6])), 3, 3)
