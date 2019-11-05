@@ -16,14 +16,15 @@
 
 #Importing Libraries
 from os.path import isfile, join
-
+import os
+import numpy as np
 from skimage.io import imread, imshow
 from skimage.transform import resize
 from skimage.feature import hog
 from skimage import exposure
 import matplotlib.pyplot as plt
 import cv2 as cv
-import os
+
 
 
 
@@ -40,6 +41,8 @@ print('After removing', list_of_png)
 # https://www.analyticsvidhya.com/blog/2019/09/feature-engineering-images-introduction-hog-feature-descriptor/
 # https://www.programcreek.com/python/example/89325/cv2.Sobel
 #https://docs.opencv.org/3.4/d2/d2c/tutorial_sobel_derivatives.html
+#https://medium.com/@nikatsanka/comparing-edge-detection-methods-638a2919476e --> read and use
+#https://www.youtube.com/watch?v=55rW6LNU2KI --> look and compare with previous link
 
 # There are a number of feature descriptors out there. Here are a few of the most popular ones:
 #
@@ -133,7 +136,7 @@ ax2.set_title('Histogram of Oriented Gradients')
 plt.show()
 
 
-#Calculating Horizaontal and Vertical gradients separetly (SobelX, SobelY)
+#Calculating Horizaontal and Vertical gradients separetly (SobelX, SobelY) ------> SOBEL METHOD
 
 SCALE = 1
 DELTA = 0
@@ -142,26 +145,78 @@ DDEPTH = cv.CV_16S  ## to avoid overflow
 #Horizontal
 gradx = cv.Sobel(img, DDEPTH, 1, 0, ksize=3, scale=SCALE, delta=DELTA)
 gradx = cv.convertScaleAbs(gradx)
-print('Horizontal(X) Gradient:',gradx)
-cv.imshow('Horizaontal Gradient', gradx)
+print('Horizontal(X) Gradient using Sobel method:\n', gradx)
+plt.title('Horizontal(X) Gradient Histogram using Sobel method ')
+plt.xlabel('Orientation')
+plt.ylabel('Gradient Magnitude')
+plt.hist(gradx.ravel())
+plt.show()
+cv.imshow('Horizaontal Gradient using Sobel method', gradx)
 cv.waitKey(0)
 
 #Vertical
 grady = cv.Sobel(img, DDEPTH, 0, 1, ksize=3, scale=SCALE, delta=DELTA)
 grady = cv.convertScaleAbs(grady)
-print('Vertical(Y) Gradient: ',grady)
-cv.imshow('Vertical Gradient', grady)
+print('Vertical(Y) Gradient using Sobel method: \n', grady)
+plt.title('Vertical(Y) Gradient Histogram using Sobel method')
+plt.xlabel('Orientation')
+plt.ylabel('Gradient Magnitude')
+plt.hist(grady.ravel());
+plt.show()
+cv.imshow('Vertical Gradient using Sobel method', grady)
 cv.waitKey(0)
 
-Gradient_Magnitude = cv.magnitude(gradx, grady)
-print('Gradient Magnitude:', Gradient_Magnitude)
 
 #Combined Horizontal and Vertical
 grad = cv.addWeighted(gradx, 0.5, grady, 0.5, 0)
-print('Combined Horizontal and Vertical: ',grad)
-cv.imshow('Combined Horizontal and Vertical: ', grad)
+print('Combined Horizontal and Vertical using Sobel method: \n', grad)
+plt.title('Combined Horizontal and Vertical using Sobel method ')
+plt.xlabel('Orientation')
+plt.ylabel('Gradient Magnitude')
+plt.hist(grad.ravel())
+plt.show()
+cv.imshow('Combined Horizontal and Vertical using Sobel method: ', grad)
 cv.waitKey(0)
 
 
-#print('Gradient Magnitude', np.hypot(gradx, grady))
+# #Iamge Orientation
+# # Compute the orientation of the image
+# orientation = cv.phase(gradx, grady, angleInDegrees = True)
+# print('Orientation: \n', orientation)
 
+
+#Calculating Horizaontal and Vertical gradients separetly (prewittx, prewitty) ------> #PREWITT METHOD
+kernelx = np.array([[1,1,1],[0,0,0],[-1,-1,-1]])
+kernely = np.array([[-1,0,1],[-1,0,1],[-1,0,1]])
+prewittx = cv.filter2D(img, -1, kernelx)
+print('Horizontal(X) Gradient using Prewitt method:\n', prewittx)
+plt.title('Horizontal(X) Gradient Histogram using Prewitt method ')
+plt.xlabel('Orientation')
+plt.ylabel('Gradient Magnitude')
+plt.hist(prewittx.ravel())
+plt.show()
+cv.imshow('Horizaontal Gradient using Prewitt method', prewittx)
+cv.waitKey(0)
+
+
+prewitty = cv.filter2D(img, -1, kernely)
+print('Vertical(Y) Gradient using Prewitt method:\n', prewitty)
+plt.title('Vertical(Y) Gradient Histogram using Prewitt method ')
+plt.xlabel('Orientation')
+plt.ylabel('Gradient Magnitude')
+plt.hist(prewitty.ravel())
+plt.show()
+cv.imshow('Horizaontal Gradient using Prewitt method', prewitty)
+cv.waitKey(0)
+
+
+#Combined Horizontal and Vertical
+prewitt = cv.addWeighted(prewittx, 0.5, prewitty, 0.5, 0)
+print('Combined Horizontal and Vertical using Prewitt method: \n', prewitt)
+plt.title('Combined Horizontal and Vertical using Prewitt method ')
+plt.xlabel('Orientation')
+plt.ylabel('Gradient Magnitude')
+plt.hist(prewitt.ravel())
+plt.show()
+cv.imshow('Combined Horizontal and Vertical using Prewitt method: ', prewitt)
+cv.waitKey(0)
