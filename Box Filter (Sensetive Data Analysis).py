@@ -8,15 +8,11 @@
 # -------------------------------------------
 
 #Imports
-import requests as re
-import bs4
 import os
 import numpy as np
 import cv2
 from os import listdir
 from os.path import isfile, join
-from pathlib import Path
-import logging
 import timeit
 
 import matplotlib.pyplot as plt
@@ -102,7 +98,7 @@ def compute_window_mean_and_var(image, window_w, window_h):
 
 
 #Check for one occure --> Fast Box Filter
-_run_box_filter(open_img(os.path.join(path, list_of_png[32])), 3)
+_run_box_filter(open_img(os.path.join(path, list_of_png[32])), 11)
 
 #Check for one occure --> Simple Box Filter (Mean Filter)
-compute_window_mean_and_var (open_img (os.path.join (path, list_of_png[6])), 3, 3)
+compute_window_mean_and_var (open_img (os.path.join (path, list_of_png[6])), 11, 11)
