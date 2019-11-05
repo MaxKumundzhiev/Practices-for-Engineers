@@ -61,7 +61,7 @@ from sklearn.model_selection import KFold, cross_val_score
 #Metrics
 from sklearn import metrics
 from sklearn.metrics import roc_auc_score
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_splitx
 
 #Models
 from sklearn.neighbors import KNeighborsClassifier
