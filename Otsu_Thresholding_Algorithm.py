@@ -12,7 +12,6 @@
 # #https://habr.com/ru/post/128768/
 #https://www.meccanismocomplesso.org/en/opencv-python-the-otsus-binarization-for-thresholding/
 
-
 # #######################################STEPS####################################################
 # # 1. Загружаем в программу изображение RGB
 # # 2. Переводим изображение из RGB в полутоновое (с помощью формулы I = 0.2125 R + 0.7154 G + 0.0721 B), сумма коэфицентов RGB в данной формуле не должна превышать 1
@@ -94,32 +93,38 @@ plt.title('Histogram'), plt.xticks([]), plt.yticks([])
 plt.subplot(3,1,3), plt.imshow(imgf,cmap = 'gray')
 plt.title('Otsu thresholding'), plt.xticks([]), plt.yticks([])
 plt.show()
-print(ret)
+print('Threshold value: ', ret, '\n', imgf)
 
 
-
-
-# img = cv.imread('building.png',0)
-# blur = cv.GaussianBlur(img,(5,5),0)
-# # find normalized_histogram, and its cumulative distribution function
-# hist = cv.calcHist([blur],[0],None,[256],[0,256])
-# hist_norm = hist.ravel()/hist.max()
-# Q = hist_norm.cumsum()
-# bins = np.arange(256)
+# import cv2
+# import numpy as np
+#
+# img = cv2.imread ('noisy_leaf.jpg', 0)
+# # blur = cv2.GaussianBlur(img,(5,5),0)
+#
+# # find normalized_histogram, and its cumulative distribution functio
+# hist = cv2.calcHist ([img], [0], None, [256], [0, 256])
+# hist_norm = hist.ravel () / hist.max ()
+# Q = hist_norm.cumsum ()
+# bins = np.arange (256)
 # fn_min = np.inf
 # thresh = -1
-# for i in range(1,256):
-#     p1,p2 = np.hsplit(hist_norm,[i]) # probabilities
-#     q1,q2 = Q[i],Q[255]-Q[i] # cum sum of classes
-#     b1,b2 = np.hsplit(bins,[i]) # weights
+# for i in xrange (1, 256):
+#     p1, p2 = np.hsplit (hist_norm, [i])  # probabilities
+#     q1, q2 = Q[i], Q[255] - Q[i]  # cum sum of classes
+#     if q1 == 0:
+#         q1 = 0.00000001
+#     if q2 == 0:
+#         q2 = 0.00000001
+#     b1, b2 = np.hsplit (bins, [i])  # weights
 #     # finding means and variances
-#     m1,m2 = np.sum(p1*b1)/q1, np.sum(p2*b2)/q2
-#     v1,v2 = np.sum(((b1-m1)**2)*p1)/q1,np.sum(((b2-m2)**2)*p2)/q2
+#     m1, m2 = np.sum (p1 * b1) / q1, np.sum (p2 * b2) / q2
+#     v1, v2 = np.sum (((b1 - m1) ** 2) * p1) / q1, np.sum (((b2 - m2) ** 2) * p2) / q2
 #     # calculates the minimization function
-#     fn = v1*q1 + v2*q2
-#     if fn < fn_min:
+#     fn = v1 * q1 + v2 * q2
+#     if fn & lt; fn_min:
 #         fn_min = fn
 #         thresh = i
 # # find otsu's threshold value with OpenCV function
-# ret, otsu = cv.threshold(blur,0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
-# print( "{} {}".format(thresh,ret) )
+# ret, otsu = cv2.threshold (img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+# print (thresh, ret)
