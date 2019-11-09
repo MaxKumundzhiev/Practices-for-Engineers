@@ -24,7 +24,7 @@ from skimage.feature import hog
 from skimage import exposure
 import matplotlib.pyplot as plt
 import cv2 as cv
-
+from nms import non_max_suppression_slow, non_max_suppression_fast
 
 
 
