@@ -24,7 +24,7 @@ from skimage.feature import hog
 from skimage import exposure
 import matplotlib.pyplot as plt
 import cv2 as cv
-from nms import non_max_suppression_slow, non_max_suppression_fast
+#from nms import non_max_suppression_slow, non_max_suppression_fast
 
 
 
@@ -83,7 +83,7 @@ print('After removing', list_of_png)
 
 #Step2:
 # - Create a histogram of generated 64 (8*8) gradient vectors
-# - Each sell is then split into angular bins, eacj bin corresponds to a gradient direction
+# - Each sell is then split into angular bins, each bin corresponds to a gradient direction
 
 # -------------------------------------------Implementing HOG Feature Descriptor-------------------------------------------
 
@@ -117,8 +117,8 @@ cv.waitKey(0)
 # magnitude (total gradient) and orientation individually. The hog function would internally calculate it and return the feature matrix.
 
 #Creating HOG features
-fd, hog_image = hog(img, orientations=9, pixels_per_cell=(8, 8),
-                    cells_per_block=(2, 2), visualize=True, multichannel=False)
+fd, hog_image = hog(img, orientations=9, pixels_per_cell=(6, 6),
+                    cells_per_block=(1, 1), visualize=True, multichannel=False)
 
 print(fd.shape)
 

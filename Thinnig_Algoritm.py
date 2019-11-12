@@ -41,11 +41,11 @@ import numpy as np
 # Create an image with text on it
 img = np.zeros ((100, 400), dtype='uint8')
 font = cv2.FONT_HERSHEY_SIMPLEX
-cv2.putText (img, 'Sense Data', (5, 70), font, 2, (255), 5, cv2.LINE_AA)
+cv2.putText (img, 'Dmitri', (10, 70), font, 2, (255), 4, cv2.LINE_AA)
 img1 = img.copy ()
 
 # Structuring Element
-kernel = cv2.getStructuringElement (cv2.MORPH_CROSS, (3, 3))
+kernel = cv2.getStructuringElement (cv2.MORPH_CROSS, (6, 6))
 # Create an empty output image to hold values
 thin = np.zeros (img.shape, dtype='uint8')
 
