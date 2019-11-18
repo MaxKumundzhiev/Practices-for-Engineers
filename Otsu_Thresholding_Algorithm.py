@@ -80,7 +80,7 @@
 import cv2
 from matplotlib import pyplot as plt
 
-img = cv2.imread('/Users/macbook/PycharmProjects/Images/barbara.png',0)
+img = cv2.imread('/Users/macbook/Documents/I/University ELTE/3 Semester/Sense Data/otsu_test/finger.png',0)
 
 ret, imgf = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
