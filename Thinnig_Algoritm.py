@@ -94,6 +94,5 @@ for im in path_to_image:
     ax2.imshow(out_thin, cmap='gray')
     ax2.set_title('Thin')
 
-    #plt.savefig('/tmp/char_out.png')
     plt.show()
 
