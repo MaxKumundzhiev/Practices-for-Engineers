@@ -10,11 +10,24 @@
 
 #__________________Classes___________________
 
-#CLass -
-#Method - def
+#__init__ and __call__
+
+# In [1]: class A:
+#    ...:     def __init__(self):
+#    ...:         print "init"
+#    ...:
+#    ...:     def __call__(self):
+#    ...:         print "call"
+#    ...:
+#    ...:
+#
+# In [2]: a = A()
+# init
+#
+# In [3]: a()
+# call
 
 
-#Creating a class (all the names of classes should start with upper case)
 class Dog():
     '''Simple model of Dog'''
 
@@ -37,4 +50,18 @@ neighbour_dog = Dog('Charli', 4)
 
 print(my_dog.name, my_dog.age, my_dog.command_sit(), my_dog.command_jump())
 print(neighbour_dog.name, neighbour_dog.age, neighbour_dog.command_sit())
+
+
+class Cat():
+    '''Simple model of Cat'''
+    def __call__(self, name, color):
+        self.name = name
+        self.color = color
+        print('Called the object Cat with name {0} and color {1}'.format(name, color))
+
+
+
+my_cat = Cat()
+my_cat('Tom', 2)
+
 
