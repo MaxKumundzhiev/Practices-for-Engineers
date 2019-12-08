@@ -27,7 +27,7 @@ def random_symmetric_matrix(n, p):
     y = np.triu((0 + (np.random.rand(n, n) >= (1 - p))), 1)
     y_sum = (y + y.T)
     return y_sum
-print(random_symmetric_matrix(10, 0.6))
+#print(random_symmetric_matrix(10, 0.6))
 
 """_______________________________________________________________________________________________________________________________________
 Exercise 2:
@@ -49,7 +49,7 @@ def clustering_coefficient(n, p):
     clust_coef = num/denom
 
     return clust_coef
-print(clustering_coefficient(10, 0.6))
+#print(clustering_coefficient(10, 0.6))
 
 """_______________________________________________________________________________________________________________________________________
 Answer Exercise 2:
@@ -72,7 +72,7 @@ def erdos_renyi_cluster_coeff(n, p):
     cluster_coef = nx.clustering (G)
     average_cluster_coef = nx.average_clustering (G)
     return (cluster_coef, average_cluster_coef)
-print(erdos_renyi_cluster_coeff(300, 0.2))
+#print(erdos_renyi_cluster_coeff(300, 0.2))
 
 """_______________________________________________________________________________________________________________________________________
 Answer Exercise 3:
@@ -85,7 +85,7 @@ ________________________________________________________________________________
 Exercise 4
 From Exercise 3 -->
  - Construct an Erdos-Renyi graph with n = 300 and p = 0.1; ++
- - Plot, find clusterng coefficients; ++
+ - Plot, find clustering coefficients; ++
  
 Plot the histogram of vertex degree of E-R graph. What is the distribution? 
 _______________________________________________________________________________________________________________________________________"""
@@ -101,7 +101,7 @@ def erdos_renyi_distribution(n, p):
              facecolor='blue', alpha=.75, rwidth=.9)
     plt.grid(True)
     plt.show()
-erdos_renyi_distribution(300, 0.1)
+#erdos_renyi_distribution(300, 0.1)
 
 """_______________________________________________________________________________________________________________________________________
 Answer Exercise 4:
@@ -117,4 +117,21 @@ What is the it's average clustering coefficient? Plot the histogram of it's vert
 
 If the graph would be E-R random graph, what would be the most likely values for n and p?       
 _______________________________________________________________________________________________________________________________________"""
+
+def total(n, p):
+    G = nx.from_numpy_matrix(random_symmetric_matrix(n, p))
+    nx.draw_networkx(G)
+    plt.show()
+    print('There are {0} nodes, {1} verticies, {2} connected components. Average clustering coefficient is {3}'.format(nx.number_of_nodes(G), nx.number_of_edges(G), nx.number_connected_components(G), nx.average_clustering(G)))
+
+    #plot histogram
+    A = nx.adj_matrix(G)
+    s = np.zeros(nx.number_of_nodes(G))
+    for i in range(nx.number_of_nodes(G)):
+        s[i] = np.sum(A[:, i])
+
+    plt.hist(s, facecolor='r', alpha=.75, rwidth=.9)
+    plt.grid(True)
+    plt.show()
+total(100, 0.8)
 
