@@ -24,7 +24,7 @@ def display_graph(G, i, ne):
         # rest_nodes = list(set(G.nodes()) - set(new_node))
         rest_nodes = G.nodes ()
         new_edges = ne
-        rest_edges = list(set(G.edges()) - set(new_edges) - set([(b-a) for (a,b) in new_edges]))
+        rest_edges = list(set(G.edges()) - set(new_edges) - set([(b,a) for (a,b) in new_edges]))
     #nx.draw_networkx_nodes(G, pos, nodelist=new_node, node_color='g')
     nx.draw_networkx_nodes(G, pos, nodelist=rest_nodes, node_color='r')
     nx.draw_networkx_edges(G, pos, nodelist=new_edges, edge_color='g', style='dashdot')
