@@ -103,7 +103,6 @@ def main():
     G = add_nodes_barabasi(G, n, m0)
 
 
-
 main()
 
 
