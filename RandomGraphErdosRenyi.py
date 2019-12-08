@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import random
 
 def display_graph(G, i, ne):
-    pos = nx.circular_layout(G)
+    pos = nx.spring_layout(G)
     if i == '' and ne == '':
         new_node = []
         rest_nodes = G.nodes()
@@ -30,6 +30,29 @@ def display_graph(G, i, ne):
     nx.draw_networkx_edges(G, pos, nodelist=new_edges, edge_color='g', style='dashdot')
     nx.draw_networkx_edges(G, pos, nodelist=rest_edges, node_color='r')
     plt.show()
+
+
+
+def plot_degree_distribution(G):
+    all_degrees = [val for (node, val) in G.degree()]
+    unique_degrees = list(set(all_degrees))
+    unique_degrees.sort()
+    count_of_degrees = []
+
+    for i in unique_degrees:
+        c = all_degrees.count(i)
+        count_of_degrees.append(c)
+
+    print(unique_degrees)
+    print(count_of_degrees)
+
+
+    plt.plot(unique_degrees, count_of_degrees, '-ro')
+    plt.xlabel('Degrees')
+    plt.ylabel('Number of nodes')
+    plt.title('Degree Distribution')
+    plt.show()
+
 
 
 def erdos_renyi(G, p):
@@ -54,7 +77,7 @@ def main():
     G.add_nodes_from([i for i in range(n)])
     display_graph(G, '', '')
     erdos_renyi(G, p)
-
+    plot_degree_distribution(G)
 
 
 main()
