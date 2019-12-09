@@ -135,3 +135,46 @@ def total(n, p):
     plt.show()
 total(100, 0.8)
 
+
+
+
+
+"""
+a) Create a random network of 100 nodes and 500 edges! Explain in 2-3 sentences, what are you expecting for the degree distribution of this network!
+
+b) Write an algorithm, which rewires this network by relocating only one end of a single edge in a step.
+
+c) Using the rewiring routine, change the network step by step such, that finally the nodes with largest degree centrality must have the following degrees: 24, 21, 19, 19, 15, 14. In the first step, when this condition is satisfied, the program must stop.
+
+d) Plot the degree distribution of the final network!
+"""
+
+"""
+Create a grid network of size 6x6, where nodes can be in two states: green or yellow and links can have three labels: gg, yy and gy depending on the node states at the ends of the link. If both nodes at the ends are green, the link is labeled with gg. If both ends are yellow, it has yy label. Otherwise the link is labelled with gy.
+
+a) color 16 nodes as green and 20 nodes as yellow randomly.
+
+b) label the links according the rule above
+
+c) rewire the links by choosing randomly two new nodes for each edge
+
+Estimate the probability, that a link is correctly labeled after rewiring.
+"""
+
+"""
+Download at least 10 000 authors from the Hungarian Repository of Academic Publications (oktatas.mtmt.hu).
+
+a) Create a network  from the author-institute relationships, where an author is connected to an institute, if he or she works for that institute!
+
+b) Create the lists of the most important authors! One list should be based on degree, the other one should rank authors according to betweenness.
+
+c) Determine the component size distribution of the network!
+"""
+
+"""
+a) Create a network from 100 cliques, where the clique size varies between 5 and 10 randomly!
+
+b) Create a ring from these cliques! The longest one from all shortest paths of the ring should be 200 steps long.
+
+c) Select 10 nodes randomly, and simulate an SI model! The 10 selected nodes are the initially infected nodes and other nodes are healthy at the beginning. Draw the fraction of infected nodes step-by-step, when the infection probability is 0.02!
+"""
