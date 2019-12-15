@@ -1,4 +1,4 @@
-# Practices for Data Engineeres and Machine Learning Engineers. 
+# Practices for Data Engineers and Machine Learning Engineers.
 
 This repository will provide your with wide range of issues and it's solution of different Pure Python and Data Science topics.<br>
 All the topics of folders are followed by thier names. <br>
