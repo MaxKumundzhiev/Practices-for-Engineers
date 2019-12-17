@@ -1,0 +1,9 @@
+%% <Maksim Kumundzhiev>                 
+%% <V249C6>
+%% Network Science
+%% <16.12.2019>
+%% These solutions were submitted and prepared by <Maksim Kumundzhiev, V249C6> for the Midterm assignments of the Network Science course.
+%% I declare that these solutions are my own work.
+%% I have not copied or used third party solutions.
+%% I have not passed my solution to my classmates, neither  made it public.
+%% Students’ regulation of Eötvös Loránd University (ELTE Regulations Vol. II. 74/C. § ) states that as long as a student presents another student’s work - or at least the significant part of it - as his/her own performance, it will count as a disciplinary fault. The most serious consequence of a disciplinary fault can be dismissal of the student from the University.
