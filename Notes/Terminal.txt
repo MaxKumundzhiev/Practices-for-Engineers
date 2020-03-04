@@ -1,0 +1,58 @@
+##########################################################################################################################################
+NVIGATION THROUGH FAIL SYSTEM. (PWD, CD, LS, CAT, NANO, CLEAR)
+##########################################################################################################################################
+
+The languages which can be used in the terminal can be considered as follows: bash or zsh(what is the wrapper of bash).
+Let's get started with the most useful and obvious commands.
+
+1. pwd - parent working directory (shows you absolut path to the place(directory where you are))
+2. cd - 
+3. ls - list all the folders/files which we have in the directory
+4. ls -a - list all the folders/files which we have in the directory, additionally, hidden files. Flag -a -means list ALL. (As the rule all the names 
+of hidden files started with . (Ex: .hidden.txt))
+5. ls -l - list all the folders/files which we have in the directory in the long format. Flag -l means LONG version
+6. ls -la - list all the folders/files which we have in the directory in the long format. Flag -la means ALL files using LONG version.
+7. cd / cd .. / cd ../.. - walk trough the directories
+8. cat - open file for reading
+9. nano (or another similar commands) - open file for writing
+10. clear (or cmd l) - clear the sceen
+11. cd ~ - walk into home folder
+
+
+##########################################################################################################################################
+OPERATIONS WITH FILES AND FOLDERS. (TOUCH, MKDIR, CP, MV, RM)
+##########################################################################################################################################
+
+1. touch - create a new file
+2. mkdir - create a new folder
+3. touch{main,config,migrate}.py - create a group of files (important, without backspaces)
+
+####Copy file
+4. cp {name_of_file_which_to_copy} {path_to_save_and_name_of_new_file} - if you would like to save in the same directory, than you need write just the name of enw file
+Ex: cp old_file.txt new_file.txt OR cp old_file.txt Desktop/folder_to_save_new_file/new_file.txt
+
+####Rename and replace files (basically, it is the same operations)
+##Rename file
+5. mv {old_name_of_file} {new_name_of_file}
+EX: mv old_file.txt new_file.txt
+
+##Rename and replace
+6. mv {old_name_of_file} {path_where_to_replace_and_rename/new_name_of_file}
+EX: mv old_file_name.txt ../../new_file_name.txt
+
+####Remove files (be carefull, files will be removed completely)
+7. rm {name_of_file_to_delete}
+
+####Remove folder (be carefull, files will be removed completely)
+8. rm -r {name_of_folder_to_delete}, where flag "r" means recursively.(Flag can be as follows: -r, -R)
+
+####Remove empty folder (be carefull, files will be removed completely)
+9. rm -dir {name_of_folder_to_delete}, where flag "r" means recursively.(Flag can be as follows: -d, --dir)
+
+
+##########################################################################################################################################
+COMMAND GREP(GLOBAL REGULAR EXPRESSION PRINT). FIND ALL THE FOLDERS AND FILES. (GREP)
+##########################################################################################################################################
+
+10. grep 
+
