@@ -19,6 +19,8 @@
 *.rar
 *.tar
 *.zip
+*.idea
+*.ipynb_checkpoints
 
 # Logs and databases #
 ######################
