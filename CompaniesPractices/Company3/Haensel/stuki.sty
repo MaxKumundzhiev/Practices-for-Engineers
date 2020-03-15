@@ -1,0 +1,272 @@
+%%%
+%%%     stuki.sty - Style file for LaTeX structograms, version 2.5.
+%%%
+%%%     Copyright 1999,2000,2001 Károly Lőrentey. 
+%%%
+%%%     E-mail: lorentey@inf.elte.hu
+%%%
+%%%     The latest official version of this package is available at
+%%%           http://www.inf.elte.hu/~lorentey/stuki/
+%%%
+%%%     Inspired by `stuki.tex', written by Huszár Péter Zsolt.
+%%%
+%%%   This program may be freely copied under the terms of the GNU
+%%%   General Public License (GPL), version 2, or at your option
+%%%   any later version.
+
+\NeedsTeXFormat{LaTeX2e}
+\def\stuki@@version{2.5}
+\def\stuki@@date{2001/01/26}
+\ProvidesPackage{stuki}[\stuki@@date\space\stuki@@version\space Lorentey]
+\typeout{Struktogramok\space\stuki@@version\space[\stuki@@date]}
+
+%% Default structogram width
+\newlength{\stukiwidth}
+\setlength{\stukiwidth}{10cm}
+
+%% Default statement height
+\newlength{\stmheight}
+\setlength{\stmheight}{18pt}
+
+%% Default indentation of loop bodies
+\newcommand{\loopindent}{\stmheight}
+
+%% Default height of slashes in IF boxes (rel. to \stmheight)
+\newcommand{\slashheight}{1}
+
+%%%
+%%%  Interesting internal definitions
+%%%
+
+%% Draws a horizontal line with zero height.  
+\newcommand{\stuki@hrule}{%
+  \hrule height \@wholewidth depth 0pt
+  \vskip-\@wholewidth
+  \relax}
+
+%% Draws a vertical line with zero width. 
+\newcommand{\stuki@vrule}{%
+  \vrule width \@wholewidth
+  \hskip-\@wholewidth
+  \relax}
+
+%% Draws a backslash of width 0.
+\newcommand{\stuki@leftif}{{%
+    \@tempdima\slashheight\stmheight
+    \unitlength=0.5\@tempdima
+    \hskip \@wholewidth   % Skip over the left side of the box
+    \begin{picture}(0,0)
+      \put(1,0){\line(-1,2){1}}
+    \end{picture}%
+    \hskip -\@wholewidth}}
+
+%% Forward slash.
+\newcommand{\stuki@rightif}{{%
+    \@tempdima\slashheight\stmheight
+    \unitlength=0.5\@tempdima
+    \begin{picture}(0,0)
+      \put(-1,0){\line(1,2){1}}
+    \end{picture}}}
+
+%% Draws the title
+\newcommand{\stuki@title}[2]{%
+  \hbox to #1{\hfil\stuki@ovalbox{#2}\hfil}%
+  \nointerlineskip
+  \hbox to #1{\hfil\rlap{\vrule width \@wholewidth height 0.333\stmheight}\hfil}}
+
+% The following commands were taken from fancybox.sty, 
+% which ruins toc generation
+\newsavebox{\stuki@box}
+\newcommand{\stuki@ovalbox}[1]{\begingroup
+        \setbox\stuki@box\hbox{{#1}}%
+        \@tempdimc 3pt \advance\@tempdimc\@wholewidth 
+        \@tempdima\ht\stuki@box \advance\@tempdima\dp\stuki@box
+        \advance\@tempdima2\@tempdimc 
+        \@tempdimb\wd\stuki@box \advance\@tempdimb2\@tempdimc
+        \stuki@fancy@@oval\@tempdimb\@tempdima{}%
+        \@tempdima\dp\stuki@box \advance\@tempdima\@tempdimc
+        \wd\@tempboxa=\z@
+        \leavevmode\hbox{\lower\@tempdima\box\@tempboxa
+        \kern\@tempdimc\box\stuki@box\kern\@tempdimc}\endgroup}
+
+\def\cornersize{\@ifstar{\@cornersize}{\@@cornersize}}
+\def\@cornersize#1{%
+  \@tempdima=#1\relax
+  \edef\the@cornersize{\number\@tempdima sp}}
+\def\@@cornersize#1{%
+  \edef\the@cornersize{#1\noexpand\@tempdimb}}
+\cornersize{.5}
+
+\def\stuki@fancy@@oval#1#2#3{%
+  \boxmaxdepth \maxdimen
+  \@ovttrue \@ovbtrue \@ovltrue \@ovrtrue
+  \@tfor\@tempa :=#3\do{\csname @ov\@tempa false\endcsname}%
+  \@ovxx#1\relax
+  \advance\@ovxx-\@wholewidth
+  \@ovyy#2\relax
+  \advance\@ovyy-\@wholewidth
+  \@tempdimb \ifdim \@ovyy >\@ovxx \@ovxx\else \@ovyy \fi
+  \advance\@tempdimb-2pt
+  \@getcirc\@tempdimb
+  \@ovro\ht\@tempboxa \@ovri\dp\@tempboxa
+  \@ovdx\@ovxx \advance\@ovdx-\@tempdima \divide\@ovdx \tw@
+  \@ovdy\@ovyy \advance\@ovdy-\@tempdima \divide\@ovdy \tw@
+  \@circlefnt
+  \setbox\@tempboxa\hbox{%
+    \if@ovr \@ovvert32\kern -\@tempdima \fi
+    \if@ovl \kern \@ovxx \@ovvert01\kern -\@tempdima \kern -\@ovxx \fi
+    \if@ovt \@ovhorz \kern -\@ovxx \fi
+    \if@ovb \raise \@ovyy \@ovhorz \fi}%
+  \advance\@ovdx\@ovro
+  \advance\@ovdy\@ovro
+  \advance\@ovxx\@wholewidth
+  \wd\@tempboxa=\@ovxx
+  \dp\@tempboxa=\z@}
+
+
+%%%
+%%% Nothing to configure below this line
+%%%
+
+%% Draws a horizontal line, but only if \ifstuki@rule
+\newcommand{\stuki@condrule}{\ifstuki@rule\stuki@hrule\fi}
+
+\newlength{\stuki@width}%       Width of current subblock
+\newlength{\stm@height}%        Height of current statement
+\newlength{\stuki@height}%      Height of current subblock
+\newlength{\stuki@condwidth}%   Auxiliary width
+\newlength{\stuki@condheight}%  Auxiliary height
+\newif\ifstuki@rule%            True if a rule is needed before next stmt
+\newif\ifstuki@when%            True if we've seen a WHEN in a CASE stmt
+\newif\ifstuki@slash%           True if WHEN should draw a slash
+\newif\ifstuki@stm%             True if \stuki@stm does \stm, false if \stm*
+
+%%%
+%%%  Box-drawing commands.  They assume that TeX is in restricted
+%%%  vertical mode.
+%%%
+
+%% Puts a single statement into a hbox of specified height and of width
+%% \stuki@width.
+%%              \stm[<rel.height>]{ <statement> // <continuation> ... }
+\newcommand{\stuki@stm}[2][1]{%
+  \stm@height=\stmheight
+  \stm@height=#1\stm@height
+  \def\\{%
+    \ifstuki@stm$\else\unskip\fi
+    \hfil\egroup
+    \hbox to \stuki@width\bgroup
+    \hfil\ifstuki@stm$\else\ignorespaces\fi}%
+  \hbox to \stuki@width{%
+    \vbox to \stm@height{%
+      \stuki@condrule\vfil
+      \hbox to \stuki@width{%
+        \hfil\ifstuki@stm$#2$\else\ignorespaces#2\unskip\fi\hfil}
+      \vfil}}
+  \nointerlineskip
+  \global\stuki@ruletrue}
+
+%% Puts a loop into two hboxes of width \stuki@width.
+%%      \begin{WHILE}[<loopindent>]{<height>}{<condition>}  <body> \end{WHILE}
+\newenvironment{stuki@while}[3][\loopindent]{%
+  #3%
+  \stuki@height=#2\stmheight
+  \hbox to\stuki@width\bgroup
+    \hfil \stuki@vrule 
+    \vbox to \stuki@height\bgroup
+      \stuki@hrule  \stuki@rulefalse
+      \advance\stuki@width by -#1\vfil}
+  {\vfil\egroup\egroup\nointerlineskip}
+
+%% Builds an IF box.
+%%      \begin{IF}[<width%]{<height>}{<condition>} <true> \ELSE
+%%      <false> \end{IF}
+\newenvironment{stuki@if}[3][50]{%
+  \def\ELSE{%
+    \vfil\egroup  \stuki@vrule
+    \vbox to\stuki@height\bgroup
+      \stuki@hrule  \stuki@rulefalse
+      \advance\stuki@width by-\stuki@condwidth
+      \vfil}%
+  \stuki@condwidth=\stuki@width
+  \divide\stuki@condwidth by 100
+  \stuki@condwidth=#1\stuki@condwidth
+  \stuki@height=#2\stmheight
+  \nointerlineskip
+  \hbox to\stuki@width{\stuki@leftif\hfil\vbox{#3}\hfil\stuki@rightif}%
+  \nointerlineskip
+  \hbox to\stuki@width\bgroup
+    \vbox to\stuki@height\bgroup
+      \stuki@hrule \stuki@rulefalse \stuki@width=\stuki@condwidth
+      \vfil}
+{\vfil\egroup\egroup  \nointerlineskip  \global\stuki@ruletrue}
+
+%% Conditional statement with multiple branches.
+%%      \begin{CASE}[<condheight>]{<height>}{<#of branches>}
+%%              \WHEN[rel.width]{<condition>} <branch> ...
+%%      \end{CASE}
+\newcommand{\@WHEN}[2][1]{%
+  \ifstuki@when
+  \vfil\egroup\stuki@vrule
+  \else  \stuki@whentrue  \fi
+  \stuki@width=\stuki@condwidth   % width of this branch
+  \multiply\stuki@width by #1
+  \vbox to\stuki@height\bgroup  \hbox to\stuki@width{%
+    \ifstuki@slash\stuki@leftif\else\global\stuki@slashtrue\fi
+    \hfil \vbox to\stuki@condheight{%
+      \stuki@condrule\stuki@rulefalse\vfil#2\vfil}\hfil}%
+  \stuki@hrule  \vfil  \stuki@rulefalse}%
+\newenvironment{stuki@case}[3][1]{%
+  \def\WHEN{%
+    \@ifstar{\global\stuki@slashfalse\@WHEN}{\@WHEN}}%
+  \stuki@condwidth=\stuki@width     % unit condition width
+  \divide\stuki@condwidth by #3
+  \stuki@condheight=#1\stmheight    % height of a condition
+  \stuki@height=#2\stmheight        % overall height
+  \advance\stuki@height by\stuki@condheight
+  \nointerlineskip
+  \hbox to\stuki@width\bgroup \stuki@whenfalse  \ignorespaces}
+{\ifstuki@when
+    \vfil\egroup
+  \else
+    \PackageError{stuki}{%
+      You have to specify at least\MessageBreak
+      one branch in a \protect\CASE\space statement}
+     {Use the \protect\WHEN\space command to\MessageBreak
+      define a conditional branch.}%
+    \fi
+    % The following line gets rid of some nasty `Underfull hbox' 
+    % messages caused by rounding errors.
+    \hskip 0pt plus \@wholewidth
+    \egroup\nointerlineskip}
+
+
+%% Simple structogram.  Puts a stuki in a hbox.
+\newenvironment{stukibox}[1][\stukiwidth]{%
+  \def\stm{\@ifstar{\stuki@stmfalse\stuki@stm}{\stuki@stmtrue\stuki@stm}}%
+  \let\WHILE=\stuki@while \let\endWHILE=\endstuki@while
+  \let\IF=\stuki@if       \let\endIF=\endstuki@if
+  \let\CASE=\stuki@case   \let\endCASE=\endstuki@case
+  \stuki@width=#1  \stuki@ruletrue  \global\stuki@slashtrue
+  \hbox to\stuki@width\bgroup\stuki@vrule\vbox\bgroup}
+{\stuki@hrule\egroup\stuki@vrule\egroup}
+
+%% Named structogram.
+\newenvironment{stukibox*}[2][\stukiwidth]{%
+        \hbox\bgroup\vbox\bgroup\hbox to#1{\hfil\vbox{%
+            \stuki@title{#1}{#2}}\hfil}
+        \nointerlineskip
+        \begin{stukibox}[#1]}{\end{stukibox}\egroup\egroup}
+
+%% Centered structograms.
+\newenvironment{stuki}
+  {\begin{center}\leavevmode\begin{stukibox}}
+  {\end{stukibox}\end{center}}
+\newenvironment{stuki*}
+  {\begin{center}\leavevmode\begin{stukibox*}}
+  {\end{stukibox*}\end{center}}
+
+% Local Variables:
+% mode: latex
+% coding: latin-2
+% End: 
