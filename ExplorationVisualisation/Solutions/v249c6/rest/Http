@@ -1,0 +1,66 @@
+## REST services
+
+* Github API
+* Twitter API
+* jupyter-kernelgateway
+
+
+HTTP functions as a request–response protocol in the client–server computing model
+
+https://www.ntu.edu.sg/home/ehchua/programming/webprogramming/HTTP_Basics.html
+
+The server, which provides resources such as HTML files and other content, or performs other functions on behalf of the client, returns a response message to the client. 
+The response contains 
+* completion status information about the request 
+* and may also contain requested content in its message body. 
+
+HTTP is an application layer protocol designed within the framework of the Internet protocol suite. Its definition presumes an underlying and reliable transport layer protocol,[6] and Transmission Control Protocol (TCP) is commonly used. However, HTTP can be adapted to use unreliable protocols such as the User Datagram Protocol (UDP),
+
+HTTP resources are identified and located on the network by Uniform Resource Locators (URLs), using the Uniform Resource Identifiers (URI's) schemes http and https. URIs and hyperlinks in HTML documents form interlinked hypertext documents. 
+
+### HTTP session
+
+An HTTP session is a sequence of network request-response transactions. An HTTP client initiates a request by establishing a Transmission Control Protocol (TCP) connection to a particular port on a server (typically port 80, occasionally port 8080; see List of TCP and UDP port numbers). An HTTP server listening on that port waits for a client's request message. Upon receiving the request, the server sends back a status line, such as "HTTP/1.1 200 OK", and a message of its own. The body of this message is typically the requested resource, although an error message or other information may also be returned.
+
+### HTTP session state
+HTTP is a stateless protocol. A stateless protocol does not require the HTTP server to retain information or status about each user for the duration of multiple requests. However, some web applications implement states or server side sessions using for instance HTTP cookies or hidden variables within web forms. 
+
+### HTTP authentication
+
+#### Basic access authentication
+In the context of an HTTP transaction, basic access authentication is a method for an HTTP user agent (e.g. a web browser) to provide a user name and password when making a request. In basic HTTP authentication, a request contains a header field of the form Authorization: Basic *credentials*, where credentials is the base64 encoding of id and password joined by a colon. 
+    
+#### Digest access authentication 
+is one of the agreed-upon methods a web server can use to negotiate credentials, such as username or password,
+
+### Communication over http
+
+The client and server communicate by sending plain-text (ASCII) messages. The client sends requests to the server and the server sends responses. 
+
+### Request message
+
+The request message consists of the following:
+
+* a request line (e.g., GET /images/logo.png HTTP/1.1, which requests a resource called /images/logo.png from the server.)
+* request header fields (e.g., Accept-Language: en).
+* an empty line
+* an optional message body
+
+### Request methods
+
+* The GET method requests a representation of the specified resource. Requests using GET should only retrieve data and should have no other effect. 
+* The POST method requests that the server accept the entity enclosed in the request as a new subordinate of the web resource identified by the URI. The data POSTed might be, for example, an annotation for existing resources; a message for a bulletin board, newsgroup, mailing list, or comment thread.
+* The PUT method requests that the enclosed entity be stored under the supplied URI. If the URI refers to an already existing resource, it is modified; if the URI does not point to an existing resource, then the server can create the resource with that URI.
+* The DELETE method deletes the specified resource.
+
+### Response message
+
+The response message consists of the following:
+
+* a status line which includes the status code and reason message (e.g., HTTP/1.1 200 OK, which indicates that the client's request succeeded.)
+* response header fields (e.g., Content-Type: text/html)
+* an empty line
+* an optional message body
+
+
+You can follow HTTP meassages in the browser. 

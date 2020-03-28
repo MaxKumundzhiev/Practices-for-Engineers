@@ -1,0 +1,55 @@
+GITHUB REST API exercise
+http://github.com/
+
+Create an account first
+
+1. You need to create a token first at github 
+> Goto Settings / Developer settings 
+Copy the token! Tokens can be regenerated later if forgotten
+
+2. Test whether it works. We will use the created token for authentication. Using the right url it will associate our token with right user account
+> https://developer.github.com/v3/#authentication
+This is a GET method. curl's default method is GET 
+
+curl -H "Authorization: token  yourtoken" https://api.github.com/user
+
+
+3. Create a new repository
+> https://developer.github.com/v3/repos/#create
+The data parameter needs to contain "auto_init": true
+in order to initiate the repository and be able to add/commit files later on. It alse creates a Readme.md 
+Your curl call is going to use the POST method ( -X POST) and will have data (-d or --data )
+e.g.: curl -X POST  -H "Authorization: token  yourtoken" URL -d '{"key1":"valu1, "key2", "value2"}'
+
+
+4. Modify 'homepage' and 'description' fields for the repository
+> https://developer.github.com/v3/repos/#edit
+All repositories will use a safename, which is the given name in the previous call with lowercase letters and spaces replaced by dashes.
+
+
+
+5. Create a file (commit)
+> https://developer.github.com/v3/repos/contents/#create-a-file
+The content should be encoded in base64
+cat "content of something" | base64 
+or
+base64 afile
+
+
+6. Use previous output: find tree sha list that tree
+> https://developer.github.com/v3/git/trees/#get-a-tree
+
+
+7. #Create another file, which we will delete soon
+> https://developer.github.com/v3/repos/contents/#create-a-file
+
+
+8. #Delete file
+> https://developer.github.com/v3/repos/contents/#delete-a-file
+For deleting a file we will need it's sha code
+
+
+9. Add us as a collaborator
+> https://developer.github.com/v3/repos/collaborators/#add-user-as-a-collaborator
+Add either "jegesm" or "dobos" or both users to your repository
+
