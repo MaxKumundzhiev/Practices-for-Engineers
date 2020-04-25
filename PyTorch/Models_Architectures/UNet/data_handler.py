@@ -7,19 +7,15 @@
 # github: https://github.com/KumundzhievMaxim
 # -------------------------------------------
 
-import pandas as pd
-import nibabel as ni
-import matplotlib.pyplot as plt
-
 import os
+import sys
 import zipfile
 import logging
 import numpy as np
 
-from PIL import Image
-from typing import List, Tuple
-
 import nibabel as nib
+
+from typing import List, Tuple
 
 
 class DataHandler:
@@ -91,7 +87,9 @@ class DataHandler:
             logging.info('Transformation finished')
             return train_images_paths
         except:
-            logging.info(f'Error occurred extracting {gz_file}')
+            logging.info("Unexpected error:", sys.exc_info()[0])
+            raise
+
 
     def run(self):
         logging.getLogger().setLevel(logging.INFO)
