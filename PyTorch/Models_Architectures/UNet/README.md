@@ -22,11 +22,13 @@ conda activate torch
     ### Transform data
     - You must then generate samples to train and test the detection network: 
     ```bash
-    python generate_detection_samples.py 'training_dataset' 'samples/detection/training' python generate_detection_samples.py 'testing_dataset' 'samples/detection/testing'
+    python generate_detection_samples.py 'training_dataset' 'samples/detection/training'
+    python generate_detection_samples.py 'testing_dataset' 'samples/detection/testing' 
     ``` 
     - You must then generate samples to train and test the identification network:
     ```bash
-     python generate_identification_samples.py 'training_dataset' 'samples/identification/training' python generate_identification_samples.py 'testing_dataset' 'samples/identification/testing'
+   python generate_identification_samples.py 'training_dataset' 'samples/identification/training' 
+   python generate_identification_samples.py 'testing_dataset' 'samples/identification/testing'
     ```
     ### Train models
     - Now train the detection network:
