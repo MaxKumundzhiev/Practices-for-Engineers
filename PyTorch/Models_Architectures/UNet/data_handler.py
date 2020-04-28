@@ -94,9 +94,8 @@ class DataHandler:
     def run(self):
         logging.getLogger().setLevel(logging.INFO)
         #DataHandler.unzip_input_folders(self.input_test_data_path)
-        train_images_paths = DataHandler.transform_train_data(self.input_train_data_path)
-
-        return train_images_paths
+        #train_images_paths = DataHandler.transform_train_data(self.input_train_data_path)
+        #return train_images_paths
 
 if __name__ == '__main__':
     # import argparse
