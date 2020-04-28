@@ -5,6 +5,18 @@ The database consists of spine-focused (i.e. tightly cropped) CT scans of 125 pa
 [Data Link](https://imperialcollegelondon.app.box.com/s/erhcm28aablpy1725lt93xh6pk31ply1)
 
 # Scenario:
+### Clone repository
+```bash
+git clone git@github.com:KumundzhievMaxim/Practices-for-Engineers.git
+```
+```bash
+cd Practices-for-Engineers/PyTorch/Models_Architectures/UNet 
+```
+### Setup Environment
+```bash
+conda env create -f environment.yml
+conda activate torch
+```
 ### Download data
 -  First you must download the data from BioMedia: https://biomedia.doc.ic.ac.uk/data/spine/. In the dropbox package there are collections of spine scans called 'spine-1', 'spine-2', 'spine-3', 'spine-4' and 'spine-5', download and unzip these files and move all these scans into a directory called 'training_dataset'. You will also see a zip file called 'spine-test-data', download and unzip this file and rename it 'testing_dataset'.
     ### Transform data
