@@ -18,8 +18,6 @@ def generate_samples(dataset_dir, sample_dir,
                      spacing, sample_size,
                      no_of_samples, no_of_zero_samples,
                      file_ext=".nii.gz"):
-
-    # numpy these so they can be divided later on
     sample_size = np.array(sample_size)
 
     ext_len = len(file_ext)
@@ -33,28 +31,22 @@ def generate_samples(dataset_dir, sample_dir,
           " x " + str(sample_size_np[1]) + " x " + str(sample_size_np[2]) + " for " + str(len(paths)) + " scans")
 
     for cnt, data_path in enumerate(paths):
-        # get path to corresponding metadata
         data_path_without_ext = data_path[:-ext_len]
         metadata_path = data_path_without_ext + ".lml"
 
-        # get image, resample it and scale centroids accordingly
         labels, centroids = opening_files.extract_centroid_info_from_lml(metadata_path)
         centroid_indexes = np.round(centroids / np.array(spacing)).astype(int)
 
         volume = opening_files.read_nii(data_path, spacing=spacing)
 
-        # densely populate
         disk_indices = pre_compute_disks(spacing)
         dense_labelling = densely_label(volume.shape,
                                         disk_indices,
                                         labels,
                                         centroid_indexes,
                                         use_labels=False)
-        # dense_labelling = spherical_densely_label(volume.shape, 14.0, labels, centroid_indexes, use_labels=False)
-
         sample_size_in_pixels = (sample_size / np.array(spacing)).astype(int)
 
-        # crop or pad depending on what is necessary
         if volume.shape[0] < sample_size_in_pixels[0]:
             dif = sample_size_in_pixels[0] - volume.shape[0]
             volume = np.pad(volume, ((0, dif), (0, 0), (0, 0)),
@@ -91,14 +83,12 @@ def generate_samples(dataset_dir, sample_dir,
             sample = volume[corner_a[0]:corner_b[0], corner_a[1]:corner_b[1], corner_a[2]:corner_b[2]]
             labelling = dense_labelling[corner_a[0]:corner_b[0], corner_a[1]:corner_b[1], corner_a[2]:corner_b[2]]
 
-            # if a centroid is contained
             unique_labels = np.unique(labelling).shape[0]
             if unique_labels > 1 or j < no_of_zero_samples:
                 if unique_labels == 1:
                     j += 1
                 i += 1
 
-                # save file
                 name_plus_id = name + "-" + str(i)
                 path = '/'.join([sample_dir, name_plus_id])
                 sample_path = path + "-sample"
@@ -107,7 +97,6 @@ def generate_samples(dataset_dir, sample_dir,
                 np.save(labelling_path, labelling)
 
         print(str(cnt + 1) + " / " + str(len(paths)))
-
 
 
 generate_samples(dataset_dir=sys.argv[1],

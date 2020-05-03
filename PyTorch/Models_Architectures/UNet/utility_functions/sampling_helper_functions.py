@@ -12,7 +12,6 @@ import numpy as np
 from utility_functions.labels import LABELS, LABELS_NO_L6, VERTEBRAE_SIZES
 
 
-# takes in a volume of predictions (0 and 1s) and takes out all but the largest island of points
 def crop_labelling(predictions):
     width, height, depth = predictions.shape
     explored = {}
@@ -31,8 +30,6 @@ def crop_labelling(predictions):
         new_predictions[i, j, k] = 1
 
     largest_island_np = np.array(largest_island)
-    # print(predictions.shape)
-    # print(largest_island_np.shape)
     i_min = np.min(largest_island_np[:, 0])
     i_max = np.max(largest_island_np[:, 0])
     j_min = np.min(largest_island_np[:, 1])
@@ -44,29 +41,6 @@ def crop_labelling(predictions):
     return bounds, new_predictions
 
 
-'''
-def get_island(point, explored, predictions):
-    i, j, k = point
-    if point in explored:
-        return []
-
-    explored[point] = True
-
-    if predictions[i, j, k] == 0:
-        return []
-
-    acc = [point]
-    for i_add in range(-1, 2):
-        for j_add in range(-1, 2):
-            for k_add in range(-1, 2):
-                if i_add != 0 or j_add != 0 or k_add != 0:
-                    next_point = (i + i_add, j + j_add, k + k_add)
-                    acc += get_island(next_point, explored, predictions)
-    return acc
-'''
-
-
-# https://www.geeksforgeeks.org/iterative-depth-first-traversal/
 def get_island(point, explored, predictions):
     stack = [point]
     acc = []
@@ -88,7 +62,6 @@ def get_island(point, explored, predictions):
     return acc
 
 
-# NOTE old function
 def spherical_densely_label(volume_shape, radius, labels, centroids, use_labels):
 
     dense_labelling = np.zeros(volume_shape)
@@ -121,27 +94,23 @@ def spherical_densely_label(volume_shape, radius, labels, centroids, use_labels)
 def densely_label(volume_shape, disk_indices, labels, centroids, use_labels):
     labelling = np.zeros(volume_shape)
 
-    # do middle centroids
     for i, label in enumerate(labels[1:-1]):
         a = (centroids[i] + centroids[i + 1]) / 2.0
         b = (centroids[i + 1] + centroids[i + 2]) / 2.0
         create_tube(a, b, disk_indices[label], labelling,
                     label, use_labels=use_labels)
 
-    # do first centroid
     b = (centroids[0] + centroids[1]) / 2.0
     a = centroids[0] - (b - centroids[0])
     a = np.clip(a, a_min=np.zeros(3), a_max=volume_shape - np.ones(3)).astype(int)
     create_tube(a, b, disk_indices[labels[0]], labelling,
                 labels[0], use_labels=use_labels)
 
-    # do last centroid
     b = (centroids[-2] + centroids[-1]) / 2.0
     a = centroids[-1] - (b - centroids[-1])
     a = np.clip(a, a_min=np.zeros(3), a_max=volume_shape - np.ones(3)).astype(int)
     create_tube(a, b, disk_indices[labels[-1]],  labelling,
                 labels[-1], use_labels=use_labels)
-
     return labelling
 
 
@@ -154,7 +123,6 @@ def create_tube(a, b, disk_indices, labelling, label, use_labels=False):
             point = center_point + np.array([inds[0], inds[1], 0])
             point = np.clip(point, a_min=np.zeros(3), a_max=labelling.shape - np.ones(3)).astype(int)
             if use_labels:
-                # ignore special vertebrae
                 if label == 'L6':
                     label = 'L5'
                 labelling[point[0], point[1], point[2]] = LABELS_NO_L6.index(label)

@@ -152,7 +152,6 @@ def resample_image_to_ref(image, ref, is_label=False, pad_value=0):
     if is_label:
         resample.SetInterpolator(sitk.sitkNearestNeighbor)
     else:
-        #resample.SetInterpolator(sitk.sitkBSpline)
         resample.SetInterpolator(sitk.sitkLinear)
 
     return resample.Execute(image)
@@ -188,7 +187,6 @@ def resample_image(image, out_spacing=(1.0, 1.0, 1.0), out_size=None, is_label=F
     if is_label:
         resample.SetInterpolator(sitk.sitkNearestNeighbor)
     else:
-        #resample.SetInterpolator(sitk.sitkBSpline)
         resample.SetInterpolator(sitk.sitkLinear)
 
     return resample.Execute(sitk.Cast(image, sitk.sitkFloat32))
@@ -219,7 +217,6 @@ def extract_patch(image, pixel, out_spacing=(1.0, 1.0, 1.0), out_size=(32, 32, 3
     if is_label:
         resample.SetInterpolator(sitk.sitkNearestNeighbor)
     else:
-        #resample.SetInterpolator(sitk.sitkBSpline)
         resample.SetInterpolator(sitk.sitkLinear)
 
     return resample.Execute(sitk.Cast(image, sitk.sitkFloat32))
