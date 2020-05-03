@@ -5,7 +5,7 @@ The database consists of spine-focused (i.e. tightly cropped) CT scans of 125 pa
 [Data Link](https://imperialcollegelondon.app.box.com/s/erhcm28aablpy1725lt93xh6pk31ply1)
 
 # Scenario:
-### Clone repository
+### Clone Repository
 ```bash
 git clone git@github.com:KumundzhievMaxim/Practices-for-Engineers.git
 ```
@@ -21,7 +21,16 @@ conda activate tf
 ```bash
 pip install -r requirements.txt
 ```
-
+### Setup Folder Structure
+#### Manually
+ - Create `training_dataset` and `testing_dataset` folders
+    - After data preprocessing training and testing data will appear under paths
+ - Create `plots` folder
+    - Resulting image will appear under path
+ - Create `samples` folder with dedicated structure as in `Project tree`
+#### Automatically
+ - `saved_models`, `checkpoints`, `logs` folders will be created automatically
+ 
 ### Project tree
 ```
 .
