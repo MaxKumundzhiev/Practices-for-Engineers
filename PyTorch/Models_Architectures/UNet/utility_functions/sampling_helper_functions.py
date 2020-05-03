@@ -6,6 +6,7 @@
 # email: kumundzhievmaxim@gmail.com
 # github: https://github.com/KumundzhievMaxim
 # -------------------------------------------
+
 import sys
 import numpy as np
 from utility_functions.labels import LABELS, LABELS_NO_L6, VERTEBRAE_SIZES
