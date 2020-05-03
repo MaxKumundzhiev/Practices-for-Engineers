@@ -1,4 +1,4 @@
-# Detection and localisation of vertebrae centroids from CT scans. 
+# Detection and localization of vertebrae centroids from CT scans. 
 
 # Data: 
 The database consists of spine-focused (i.e. tightly cropped) CT scans of 125 patients with varying types of pathologies. For most patients, multiple scans from longitudinal examinations are available, resulting in overall 242 scans in the database. For each scan, manual annotations of vertebrae centroids are provided. The data has been acquired at the Department of Radiology at the University of Washington.
