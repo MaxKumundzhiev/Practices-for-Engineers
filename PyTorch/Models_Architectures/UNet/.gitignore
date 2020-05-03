@@ -131,7 +131,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-#Training and Testing data
-.samples
-.testing_dataset
-.training_dataset
+#Modesl
+.saved_models

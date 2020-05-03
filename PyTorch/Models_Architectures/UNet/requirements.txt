@@ -1,0 +1,6 @@
+tensorflow
+keras
+matplotlib
+SimpleITK
+keras-metrics
+elasticdeform
