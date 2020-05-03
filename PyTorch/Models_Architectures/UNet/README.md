@@ -10,7 +10,7 @@ The database consists of spine-focused (i.e. tightly cropped) CT scans of 125 pa
 git clone git@github.com:KumundzhievMaxim/Practices-for-Engineers.git
 ```
 ```bash
-cd PyTorch/Models_Architectures/VertebraeCTDetectionLocalisation 
+cd PyTorch/Models_Architectures/UNet
 ```
 ### Setup Environment
 ```bash
