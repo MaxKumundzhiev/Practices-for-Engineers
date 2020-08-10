@@ -7,11 +7,9 @@ SimCLR learns basic image representations on an unlabeled corpus and can be fine
 
 ### Let us define chain of steps to proceed with:
 1. Obtain {un}labeled data to work with.
-"""bash
-Under this clause: we will obtain labeled dataset in advance to keep labels information for further easier comparison of results.
+- Under this clause: we will obtain labeled dataset in advance to keep labels information for further easier comparison of results.
 To make process easier, we will look for < 5 classes dataset.
 So, let us start with the most simple and obvious dataset Cat vs Dogs, which is accwssible from any internal dataset lib.
-"""
 
 
 
