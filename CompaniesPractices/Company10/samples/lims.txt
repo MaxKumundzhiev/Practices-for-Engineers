@@ -1,0 +1,36 @@
+MSH|^~\&|TEST||KHEIRON||202007010322||ADT^Z03|TEST-95645|P|2.3|||NE|AL|
+EVN|Z03|202007010322||01|api^Api user|
+PID|||MVZ6bb3b35a-749a-4aa0-998a-77145b176cf8|||1963|F|||||||||||||
+OBR|||ef0189ad-b412-4db9-a4d2-152ac3e2ad94||||20190422||||||||||||||||20190422||||F|||||||idXXX
+OBX||ST|RESDIAG^Result diagnosis:||C5012^|||
+
+MSH|^~\&|TEST||KHEIRON||202007010322||ADT^Z03|TEST-95645|P|2.3|||NE|AL|
+EVN|Z03|202007010322||01|api^Api user|
+PID|||MVZ9dd13293-ce18-4f1e-8d25-64dafb2bfd7f|||1962|F|||||||||||||
+OBR|||3ea1898a-046a-434a-bb0c-772b70b445a9||||20220324||||||||||||||||20220324||||F|||||||idXXX
+OBX||ST|RESDIAG^Result diagnosis:||C5012^|||
+
+MSH|^~\&|TEST||KHEIRON||202007010322||ADT^Z03|TEST-95645|P|2.3|||NE|AL|
+EVN|Z03|202007010322||01|api^Api user|
+PID|||MVZa45931c9-b895-4b49-bf25-a7ac5cc81754|||1970|F|||||||||||||
+OBR|||1d53a30a-79b7-4949-aee7-54666a8fd820||||20220425||||||||||||||||20220425||||F|||||||idXXX
+OBX||ST|RESDIAG^Result diagnosis:||C5012^|||
+
+MSH|^~\&|TEST||KHEIRON||202007010322||ADT^Z03|TEST-95645|P|2.3|||NE|AL|
+EVN|Z03|202007010322||01|api^Api user|
+PID|||MVZ54e4035a-b9eb-4118-ba1e-635e3f934c8a|||1962|F|||||||||||||
+OBR|||||||20310104||||||||||||||||20310104||||F|||||||idXXX
+OBX||ST|RESDIAG^Result diagnosis:||C5012^|||
+
+MSH|^~\&|TEST||KHEIRON||202007010322||ADT^Z03|TEST-95645|P|2.3|||NE|AL|
+EVN|Z03|202007010322||01|api^Api user|
+PID|||MVZb4dcdc27-b876-4ee1-a24d-3d14472f96ee|||1961|F|||||||||||||
+OBR|||e27e13cd-3c1e-4816-b810-d11a6103224d||||20160804||||||||||||||||20160804||||F|||||||idXXX
+OBX||ST|RESDIAG^Result diagnosis:||C5012^|||
+
+MSH|^~\&|TEST||KHEIRON||202007010322||ADT^Z03|TEST-95645|P|2.3|||NE|AL|
+EVN|Z03|202007010322||01|api^Api user|
+PID|||MVZdf70ee3f-8f64-4ab4-af78-a3a739a0a347|||1969|F|||||||||||||
+OBR|||2506a2d2-851e-4bfb-85fc-5129cd27441a||||20230319||||||||||||||||20230319||||F|||||||idXXX
+OBX||ST|RESDIAG^Result diagnosis:||C5012^|||
+
