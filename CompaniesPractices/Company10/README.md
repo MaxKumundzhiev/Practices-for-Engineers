@@ -1,4 +1,4 @@
-# Kheiron Forward Deployed Engineer challenge
+# Forward Deployed Engineer challenge
 In this exercise, we'll execute a data extraction from an imaginary data partner.
 ## Overview
 The partner stores the data in the following three systems:
