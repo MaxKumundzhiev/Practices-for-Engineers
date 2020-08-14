@@ -3,6 +3,7 @@ def process_file(fpath, logger):
 
     Returns: an array with all the messages
     """
+
     message = []
     for line in open(fpath):
         line = line.rstrip('\n')
@@ -22,33 +23,34 @@ def process_file(fpath, logger):
             if line:
                 message.append(line)
 
-if __name__ == '__main__':
-    import argparse
-    import logging
-    import pprint
 
-    # Setup logging
-    handlers = []
-    handlers.append(logging.StreamHandler())
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format='%(asctime)s:%(levelname)s:%(message)s',
-        handlers=handlers)
 
-    # Setup argument parsing
-    parser = argparse.ArgumentParser(description='Process HL7 file')
-
-    parser.add_argument(
-        'fpath',
-        metavar='hl7_file_path',
-        type=str,
-        help='path to the input HL7 file')
-
-    args = parser.parse_args()
-    fpath = args.fpath
-
-    logging.info('Start processing file {}'.format(fpath))
-    result = process_file(fpath, logging)
-    pprint.pprint([res for res in result])
-    logging.info('Finished processing file {}'.format(fpath))
-
+# if __name__ == '__main__':
+#     import argparse
+#     import logging
+#     import pprint
+#
+#     # Setup logging
+#     handlers = []
+#     handlers.append(logging.StreamHandler())
+#     logging.basicConfig(
+#         level=logging.DEBUG,
+#         format='%(asctime)s:%(levelname)s:%(message)s',
+#         handlers=handlers)
+#
+#     # Setup argument parsing
+#     parser = argparse.ArgumentParser(description='Process HL7 file')
+#
+#     parser.add_argument(
+#         'fpath',
+#         metavar='hl7_file_path',
+#         type=str,
+#         help='path to the input HL7 file')
+#
+#     args = parser.parse_args()
+#     fpath = args.fpath
+#
+#     logging.info('Start processing file {}'.format(fpath))
+#     result = process_file(fpath, logging)
+#     pprint.pprint([res for res in result])
+#     logging.info('Finished processing file {}'.format(fpath))
