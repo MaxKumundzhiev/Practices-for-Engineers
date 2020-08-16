@@ -7,60 +7,37 @@
 # github: https://github.com/KumundzhievMaxim
 # -------------------------------------------
 
-import os
-import json
-import logging
+import argparse
+from common.extractor import Extractor
 
-import pandas as pd
-from tqdm import tqdm
 
-from common.hl7read import process_file
+
+
+
+
+
+def run(**paths):
+    # # check whether file exists
+    # assert paths['lim_path'].exists() and paths['lim_path'].is_file (), f'File: {paths["lim_path"]} does not exist.'
+    # assert paths.pac_path.exists () and paths.pac_path.is_file (), f'File: {paths.pac_path} does not exist.'
+    # assert paths.ris_path.exists () and paths.ris_path.is_file (), f'File: {paths.ris_path} does not exist.'
+
+    extractor = Extractor(**paths)
+
+    pac_accession_number_ids, result_dict = extractor.process_pac()
+
+    ris_patients_ids, result_dict = extractor.process_ris(pac_accession_number_ids, result_dict)
+
 
 
 
 if __name__ == '__main__':
-    import argparse
-    import pprint
-
-    # Setup logging
-    handlers = [logging.StreamHandler()]
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format='%(asctime)s:%(levelname)s:%(message)s',
-        handlers=handlers)
-
-    # Setup argument parsing
-    # parser = argparse.ArgumentParser(description='Process HL7 file')
-
-    # parser.add_argument(
-    #     'fpath',
-    #     metavar='hl7_file_path',
-    #     type=str,
-    #     help='path to the input HL7 file')
-    #
-    # args = parser.parse_args()
-    # fpath = args.fpath
-
-    parser = argparse.Namespace(
-        fpath='/Users/macbook/Documents/GitRep/PracticesForEngineers/Practices-for-Engineers/CompaniesPractices/Company10/samples/lims.txt'
+    # get input arguments
+    args = argparse.Namespace(
+        lim_path='/Users/macbook/Documents/GitRep/PracticesForEngineers/Practices-for-Engineers/CompaniesPractices/Company10/samples/lims.txt',
+        pac_path='/Users/macbook/Documents/GitRep/PracticesForEngineers/Practices-for-Engineers/CompaniesPractices/Company10/samples/pacs.json.csv',
+        ris_path='/Users/macbook/Documents/GitRep/PracticesForEngineers/Practices-for-Engineers/CompaniesPractices/Company10/samples/ris.csv'
     )
 
-    parser = vars(parser)
-
-    logging.info('Start processing file {}'.format(parser['fpath']))
-    results = process_file(parser['fpath'], logging)
-    for index, result in enumerate(results):
-        print(f'Result # {index}')
-        for item in result:
-            print(item)
-
-    # pprint.pprint([res for res in result])
-    logging.info('Finished processing file {}'.format(parser['fpath']))
-
-
-
-
-
-
-
+    run(**vars(args))
 
