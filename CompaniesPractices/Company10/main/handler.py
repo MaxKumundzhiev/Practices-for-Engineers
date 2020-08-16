@@ -40,22 +40,21 @@ def run(lim_path: str,
 
     transformer = Transformer(lim_file, pac_file, ris_file)
 
-    LOGGER.info('Retrieved and Transformed PAC file.')
     pac_df = transformer.transform_pac()
+    LOGGER.info('Retrieved and Transformed PAC file.')
 
-    LOGGER.info('Retrieved and Transformed RIS file.')
     ris_df = transformer.transform_ris()
+    LOGGER.info('Retrieved and Transformed RIS file.')
 
     lim_df = transformer.transform_lim()
-    LOGGER.info('Retrieved and Transformed LIMS file.')
+    LOGGER.info('Retrieved and Transformed LIM file.')
 
     result_rows = Transformer.process_treatment(ris_df, pac_df, lim_df)
     LOGGER.info('Finished processing all treatments.')
 
     with open("/Users/macbook/Desktop/imaginary_partner_patients.txt", "w") as file:
         file.write(json.dumps(result_rows))
-    LOGGER.info(f'Write results to {"/Users/macbook/Desktop/imaginary_partner_patients.txt"}.')
-
+    LOGGER.info(f'Write result file to {"/Users/macbook/Desktop/imaginary_partner_patients.txt"}.')
     LOGGER.info('Kheiron test ETL job finished.')
 
 
