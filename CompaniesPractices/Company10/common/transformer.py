@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from pathlib import Path
+from typing import List, Dict
 
 from pydicom.dataset import Dataset
 
@@ -220,7 +221,8 @@ class Transformer:
     def process_treatment(
             ris_df: pd.DataFrame,
             pac_df: pd.DataFrame,
-            lims_df: pd.DataFrame):
+            lims_df: pd.DataFrame
+    ) -> List[Dict]:
         """Per each treatment (RIS id) gather information
         from resulting RIS, PAC, LIM dataframes into resulting dict
 
@@ -240,6 +242,8 @@ class Transformer:
         for treatment_index, treatment_id in enumerate(tqdm(ris_df['id'])):
             LOGGER.info(f'Processing {treatment_index+1}/{len(ris_df)} treatments.')
 
+            ris_patient_id = ris_df[ris_df['id'] == treatment_id]['pat_id'].item()  # for mapping with LIM
+
             patient_uid = pac_df[pac_df['patient_access_number_id'] == treatment_id]['patient_uid'].values[0]
             gender = pac_df[pac_df['patient_access_number_id'] == treatment_id]['sex'].values[0]
 
@@ -249,20 +253,19 @@ class Transformer:
             # studies
             dicom_studies = list(pac_df[pac_df['patient_access_number_id'] == treatment_id]['studies'].values)
             radiology_studies = ris_df['rad'].iloc[treatment_index]
-            pathology = lims_df[lims_df['id'] == treatment_id]
+            pathology = lims_df[lims_df['id'] == ris_patient_id]
 
             # check whether there is pathology record data
-            if pathology.shape[0] == 0:
+            if pathology.empty:
                 pathology_studies = {
                     'date': np.nan,
                     'opinion': np.nan
                 }
-
             else:
-                pathology_studies = pathology['patho'].values
+                pathology_studies = list(pathology['patho'].values)
 
             buff_row = {
-                'patient_uid': salty_encode (patient_uid),
+                'patient_uid': salty_encode(patient_uid),
                 'sex': gender,
                 'date_of_birth': date_of_birth,
                 'studies': dicom_studies,

@@ -49,18 +49,18 @@ def run(
     transformer = Transformer(lim_file, pac_file, ris_file)
 
     pac_df = transformer.transform_pac()
-    LOGGER.info('--Retrieved and transformed PAC file.')
+    LOGGER.info('Retrieved and transformed PAC file.')
 
     ris_df = transformer.transform_ris()
-    LOGGER.info('--Retrieved and transformed RIS file.')
+    LOGGER.info('Retrieved and transformed RIS file.')
 
     lim_df = transformer.transform_lim()
-    LOGGER.info('--Retrieved and transformed LIM file.')
+    LOGGER.info('Retrieved and transformed LIM file.')
 
-    result_dict = Transformer.process_treatment(ris_df, pac_df, lim_df)
-    LOGGER.info('--Processed all treatments.')
+    result_dict = transformer.process_treatment(ris_df, pac_df, lim_df)
+    LOGGER.info('Processed all treatments.')
 
-    LOGGER.info (f'Write result file to {path_to_save}')
+    LOGGER.info(f'Write result file to {path_to_save}')
     output_file = open(path_to_save, 'w')
     for dic in result_dict:
         json.dump(dic, output_file)
