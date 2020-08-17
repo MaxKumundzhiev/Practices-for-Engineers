@@ -11,7 +11,7 @@ import base64
 import random
 from datetime import datetime, timedelta
 
-SALT = '_KHEIRON_TEST_TASK'
+SALT = 'KHEIRON_TEST_TASK'
 
 
 def salty_encode(string) -> str:
@@ -29,7 +29,7 @@ def salty_decode(string: str) -> str:
     return message
 
 
-def jitter_date(date: str):
+def jitter_date(date: str) -> str:
     n_days = random.randint(1, 10)
     date = datetime.strptime(date, '%Y%m%d')
     shifted_date = date + timedelta(days=n_days)
