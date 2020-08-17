@@ -41,6 +41,7 @@ def run(
     pac_file = Path(pac_path)
     ris_file = Path(ris_path)
 
+    # check whether files exist
     assert lim_file.exists() and lim_file.is_file(), f'File: {lim_file} does not exist.'
     assert pac_file.exists() and pac_file.is_file(), f'File: {pac_file} does not exist.'
     assert ris_file.exists() and ris_file.is_file(), f'File: {ris_file} does not exist.'

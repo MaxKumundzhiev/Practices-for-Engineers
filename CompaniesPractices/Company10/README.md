@@ -121,6 +121,24 @@ P.S.
 To correctly handle this clause need further investigation/consultation of reason of missing value.
 ```
 
+# Results
+Following files can be found under `results` folder:
+```
+
+- imaginary_partner_patients.txt
+Resulting file with target format data per each line. 
+
+- completed_patients_ids.txt
+List of patients id who completed all types of observations such as: {PAC, RIS, LIM}.
+ 
+- incompleted_patients_ids.txt
+List of patients id who did not complete all types of observations such as: {PAC, RIS, LIM}. 
+
+- tables-schema.jpg
+Brief visualisation of tables 
+As well can be reached by provided link (shared access within Miro dashboards): https://miro.com/app/board/o9J_krsrxiQ=/
+```
+
 ## IAM
 **[Malsim Kumundzhiev](https://github.com/KumundzhievMaxim)**
 
