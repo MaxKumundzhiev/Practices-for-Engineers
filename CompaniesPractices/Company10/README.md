@@ -24,14 +24,20 @@ $ pip install -r requirements.txt
 ``` 
 
 # Launch
-To run main script and obtain results:
- 
-- replace `<your_path>`/... with related path to files
-- execute command:
+Get help:
+```bash
+python -m main.handler -h
+```
+
+Run main script and obtain results:
+1. replace `<your_path>/...` with related path to files
+2. execute following command:
 
 ```bash
 $ python -m main.handler --lim <your_path>/lims.txt --ris <your_path>/ris.csv --pac <your_path>/pacs.json.csv --save <your_path>/imaginary_partner_patients.txt
 ```
+
+
 #### Sample output
 ```bash
 {"patient_uid": "MS4yLjgyNi4wLjEuMTAxODQxMDMuNS4xLjgwNzUwS0hFSVJPTl9URVNUX1RBU0s=", "sex": "F", "date_of_birth": "1962.7.25", "studies": [{"StudyID": "S0hFSVJPTl9URVNUX1RBU0s=", "StudyDate": "2022.11.4", "StudyTime": "000000.000000", "StudyDescription": NaN, "StudyInstanceUID": "MS4yLjgyNi4wLjEuMTAxODQxMDMuNS40LjE3NTMwMktIRUlST05fVEVTVF9UQVNL", "StudyStatusID": "Q09NUExFVEVES0hFSVJPTl9URVNUX1RBU0s=", "StudyComments": NaN}, {"StudyID": "S0hFSVJPTl9URVNUX1RBU0s=", "StudyDate": "2022.11.2", "StudyTime": "000000.000000", "StudyDescription": NaN, "StudyInstanceUID": "MS4yLjgyNi4wLjEuMTAxODQxMDMuNS40LjE3NTMwMktIRUlST05fVEVTVF9UQVNL", "StudyStatusID": "Q09NUExFVEVES0hFSVJPTl9URVNUX1RBU0s=", "StudyComments": NaN}, {"StudyID": "S0hFSVJPTl9URVNUX1RBU0s=", "StudyDate": "2022.11.4", "StudyTime": "000000.000000", "StudyDescription": NaN, "StudyInstanceUID": "MS4yLjgyNi4wLjEuMTAxODQxMDMuNS40LjE3NTMwMktIRUlST05fVEVTVF9UQVNL", "StudyStatusID": "Q09NUExFVEVES0hFSVJPTl9URVNUX1RBU0s=", "StudyComments": NaN}, {"StudyID": "S0hFSVJPTl9URVNUX1RBU0s=", "StudyDate": "2022.11.4", "StudyTime": "000000.000000", "StudyDescription": NaN, "StudyInstanceUID": "MS4yLjgyNi4wLjEuMTAxODQxMDMuNS40LjE3NTMwMktIRUlST05fVEVTVF9UQVNL", "StudyStatusID": "Q09NUExFVEVES0hFSVJPTl9URVNUX1RBU0s=", "StudyComments": NaN}], "rad": {"side": ["R2", "R2"], "date": "2014.8.12", "opinion": "R2"}, "patho": {"date": NaN, "opinion": NaN}}
