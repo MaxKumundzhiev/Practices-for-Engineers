@@ -1,7 +1,7 @@
 # Forward Deployed Engineer challenge
- In this exercise, we'll execute a data extraction from an imaginary data partner. 
+In this exercise, we'll execute a data extraction from an imaginary data partner. 
 
-# Solution
+# Solution Report
 :construction: Solution was provided by Maksim Kumundzhiev. :construction:
 
 # Setup Environment
@@ -36,6 +36,7 @@ $ python -m main.handler --lim <your_path>/lims.txt --ris <your_path>/ris.csv --
 # Explonatory and Consistency Issues
 ### PAC 
 PAC table primary key: `accession number`
+
 PAC table maps with RIS table with 'accession_number_id' <--> 'id'  
 
 - Total number of `records == 904` <- it means there were made 904 observations
@@ -110,3 +111,7 @@ P.S.
 To correctly handle this clause need further investigation/consultation of reason of missing value.
 ```
 
+## IAM
+**[Malsim Kumundzhiev](https://github.com/KumundzhievMaxim)**
+
+[<img src="http://i.imgur.com/0o48UoR.png" width="35">](https://github.com/KumundzhievMaxim)             [<img src="https://i.imgur.com/0IdggSZ.png" width="35">](https://www.linkedin.com/in/maksim-kumundzhiev/)             [<img src="https://loading.io/s/icon/vzeour.svg" width="35">](https://www.kaggle.com/maximkumundzhiev) 
