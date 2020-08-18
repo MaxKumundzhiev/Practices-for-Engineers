@@ -42,7 +42,7 @@ DEPTH = 3
 SIZE = HEIGHT * WIDTH * DEPTH
 
 # path to the directory with the data
-DATA_DIR = '/Users/macbook/Documents/GitRep/PracticesForEngineers/Practices-for-Engineers/PyTorch/Architectures/SimCLR/data'
+DATA_DIR = '/data'
 
 # # url of the binary data
 # DATA_URL = 'http://ai.stanford.edu/~acoates/stl10/stl10_binary.tar.gz'
@@ -51,7 +51,7 @@ DATA_DIR = '/Users/macbook/Documents/GitRep/PracticesForEngineers/Practices-for-
 DATA_PATH = '/Users/macbook/Documents/GitRep/PracticesForEngineers/Practices-for-Engineers/PyTorch/Architectures/SimCLR/data/stl10_binary/train_X.bin'
 
 # path to the binary train file with labels
-LABEL_PATH = '/Users/macbook/Documents/GitRep/PracticesForEngineers/Practices-for-Engineers/PyTorch/Architectures/SimCLR/data/stl10_binary/train_y.bin'
+LABEL_PATH = '/data/stl10_binary/train_y.bin'
 
 
 def read_labels(path_to_labels):
