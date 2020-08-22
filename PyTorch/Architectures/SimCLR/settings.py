@@ -9,15 +9,16 @@
 
 
 PATHS = {
-    'CSV_PATH': '/Users/macbook/Documents/GitRep/PracticesForEngineers/Practices-for-Engineers/PyTorch/Architectures/SimCLR/data/faces/face_landmarks.csv',
-    'ROOT_DIR': '/Users/macbook/Documents/GitRep/PracticesForEngineers/Practices-for-Engineers/PyTorch/Architectures/SimCLR/data/faces'
+    'CSV_PATH': '/Users/macbook/Documents/GitRep/PracticesForEngineers/Practices-for-Engineers/PyTorch/Architectures/SimCLR/data/face_landmarks.csv',
+    'ROOT_DIR': '/Users/macbook/Documents/GitRep/PracticesForEngineers/Practices-for-Engineers/PyTorch/Architectures/SimCLR/data/faces',
+    'SAVE_DIR': '/Users/macbook/Documents/GitRep/PracticesForEngineers/Practices-for-Engineers/PyTorch/Architectures/SimCLR/data/augumented'
 }
 
 # image shape
-HEIGHT = 96
-WIDTH = 96
-DEPTH = 3
+HEIGHT = 256
+WIDTH = 256
+
 
 # size of a single image in bytes
-SIZE = HEIGHT * WIDTH * DEPTH
+SIZE = (HEIGHT, WIDTH)
 

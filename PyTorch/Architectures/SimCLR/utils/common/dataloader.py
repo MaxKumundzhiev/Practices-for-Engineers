@@ -36,14 +36,14 @@ class FaceLandmarksDataset:
         self.transform = transform
 
     def __len__(self):
-        return len (self.landmarks_frame)
+        return len(self.landmarks_frame)
 
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        img_name = os.path.join (self.root_dir,
-                                 self.landmarks_frame.iloc[idx, 0])
+        img_name = os.path.join(self.root_dir,
+                                self.landmarks_frame.iloc[idx, 0])
         image = io.imread(img_name)
         landmarks = self.landmarks_frame.iloc[idx, 1:]
         landmarks = np.array([landmarks])
@@ -51,6 +51,6 @@ class FaceLandmarksDataset:
         sample = {'image': image, 'landmarks': landmarks}
 
         if self.transform:
-            sample = self.transform (sample)
+            sample = self.transform(sample)
 
         return sample
