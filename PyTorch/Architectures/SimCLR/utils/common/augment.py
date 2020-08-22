@@ -19,8 +19,9 @@ autoaugment:
     - https://arxiv.org/pdf/1805.09501v1.pdf
     - https://ai.googleblog.com/2018/06/improving-deep-learning-performance.html
 
-
-randaugment,
+randaugment:
+    - https://github.com/heartInsert/randaugment/blob/master/Rand_Augment.py
+    - https://www.groundai.com/project/randaugment-practical-data-augmentation-with-no-separate-search/1
 simaugment (random color distortion + Gaussian blurring + sparse image warp);
 """
 
@@ -29,9 +30,11 @@ from PIL import Image
 from skimage import io
 import matplotlib.pyplot as plt
 
-from settings import PATHS, SIZE
-from utils.external.autoaugment import ImageNetPolicy
 from torchvision.transforms import Compose, transforms
+
+from settings import PATHS, SIZE
+from utils.external.auto_augment import ImageNetPolicy
+from utils.external.random_augment import Rand_Augment
 
 root_dir = PATHS['ROOT_DIR']
 save_dir = PATHS['SAVE_DIR']
@@ -40,16 +43,13 @@ images_names = os.listdir(PATHS['ROOT_DIR'])
 
 # Define transformations
 transforms = transforms.Compose(
-    [
-    # first step
-    transforms.Resize((256, 256)),
-    transforms.RandomCrop(size=(128)),
-    transforms.Resize(size=SIZE),
-    # second step
-    ## autoaugment
-    ImageNetPolicy()
-    ## randaugment
-    ## simaugment (random color distortion + Gaussian blurring + sparse image warp)
+    [transforms.Resize((256, 256)),
+     transforms.RandomCrop(size=(128)),
+     transforms.Resize(size=SIZE),
+     ImageNetPolicy(),  # autoaugment
+     #Rand_Augment()  # randaugment
+
+    # simaugment
 
     # transforms.ToTensor(),
     # transforms.Normalize(mean=[0.485, 0.456, 0.406],
