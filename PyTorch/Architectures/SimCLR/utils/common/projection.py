@@ -18,3 +18,10 @@ contrastive learning [46, 6], we found representations from the encoder to give 
 tasks than those from the projection network. Thus our inference-time models contain exactly the same number of
 parameters as their cross-entropy equivalents.
 """
+
+import torch.nn as nn
+
+
+class ProjectionNet(nn.Module):
+    def __init__(self):
+        super(ProjectionNet).__init__(self)
