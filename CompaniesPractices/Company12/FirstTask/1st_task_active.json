@@ -1,0 +1,47 @@
+{
+  "Anlagevermögen": {
+    "Immaterielle Vermögensgegenstände": {
+      "Selbst geschaffene gewerbliche Schutzrechte und ähnliche Rechte und Werte": {},
+      "Entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten": {},
+      "Geschäfts- oder Firmenwert (GoFW)": {},
+      "geleistete Anzahlungen": {}
+    },
+    "Sachanlagen": {
+      "Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstücken": {},
+      "technische Anlagen und Maschinen": {},
+      "andere Anlagen, Betriebs- und Geschäftsausstattung": {},
+      "geleistete Anzahlungen und Anlagen im Bau": {}
+    },
+    "Finanzanlagen": {
+      "Anteile an verbundenen Unternehmen": {},
+      "Ausleihungen an verbundene Unternehmen": {},
+      "Beteiligungen": {},
+      "Ausleihungen an Unternehmen, mit denen ein Beteiligungsverhältnis besteht": {},
+      "Wertpapiere des Anlagevermögens": {},
+      "sonstige Ausleihungen": {}
+    }
+  },
+  "Umlaufvermögen": {
+    "Vorräte/Vorratsvermögen": {
+      "Rohstoffe, Hilfsstoffe und Betriebsstoffe": {},
+      "unfertige Erzeugnisse, unfertige Leistungen": {},
+      "fertige Erzeugnisse und Waren": {},
+      "geleistete Anzahlungen": {}
+    },
+    "Forderungen und sonstige Vermögensgegenstände": {
+      "Forderungen aus Lieferungen und Leistungen (LuL), (F.a.L.L.), (FLL)": {},
+      "Forderungen gegen verbundene Unternehmen": {},
+      "Forderungen gegen Unternehmen, mit denen ein Beteiligungsverhältnis besteht": {},
+      "sonstige Vermögensgegenstände": {}
+    },
+    "Wertpapiere": {
+      "Anteile an verbundenen Unternehmen": {},
+      "sonstige Wertpapiere": {}
+    },
+    "Kassenbestand, Bundesbankguthaben, Guthaben bei Kreditinstituten und Schecks": {}
+  },
+  "Rechnungsabgrenzungsposten": {},
+  "Aktive latente Steuern": {},
+  "Aktiver Unterschiedsbetrag aus der Vermögensverrechnung": {},
+  "(ggf.) nicht durch Eigenkapital gedeckter Fehlbetrag": {}
+}

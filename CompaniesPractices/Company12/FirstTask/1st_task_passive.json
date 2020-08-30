@@ -1,0 +1,31 @@
+{
+  "Eigenkapital": {
+    "Gezeichnetes Kapital": {},
+    "Kapitalrücklage": {},
+    "Gewinnrücklagen": {
+      "gesetzliche Rücklagen": {},
+      "Rücklage für Anteile an einem herrschenden oder mehrheitlich beteiligten Unternehmen": {},
+      "satzungsmäßige Rücklagen": {},
+      "andere Gewinnrücklagen": {}
+    },
+    "Gewinnvortrag/Verlustvortrag": {},
+    "Jahresüberschuss/Jahresfehlbetrag": {}
+  },
+  "Rückstellungen": {
+    "Rückstellungen für Pensionen und ähnliche Verpflichtungen": {},
+    "Steuerrückstellungen": {},
+    "sonstige Rückstellungen": {}
+  },
+  "Verbindlichkeiten": {
+    "Anleihen, davon konvertibel": {},
+    "Verbindlichkeiten gegenüber Kreditinstituten": {},
+    "erhaltene Anzahlungen auf Bestellungen": {},
+    "Verbindlichkeiten aus Lieferungen und Leistungen (LuL), (V.a.L.L.), (VLL)": {},
+    "Verbindlichkeiten aus der Annahme gezogener Wechsel und der Ausstellung eigener Wechsel": {},
+    "Verbindlichkeiten gegenüber verbundenen Unternehmen": {},
+    "Verbindlichkeiten gegenüber Unternehmen, mit denen ein Beteiligungsverhältnis besteht": {},
+    "sonstige Verbindlichkeiten, \ndavon aus Steuern, \ndavon im Rahmen der sozialen Sicherheit": {}
+  },
+  "Rechnungsabgrenzungsposten": {},
+  "Passive latente Steuern": {}
+}
