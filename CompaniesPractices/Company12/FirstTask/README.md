@@ -41,11 +41,13 @@ P.S. The stack of components should be setup with the companie's and team's requ
 - urlib <- can be used here
 
 `Extracting HTML`
+- codec
 - selenium (dynamic web applicatins) {could setup Automated web scraping}
 - bs4 (static web applicatins)
 - lxml (static web applicatins)
 - scrapy <- can be used here (By the processes definitions, better to use on this step)
 - urlib <- can be used here (By the processes definitions, better to use on this step)
+
 
 `Extracting CSV`
 - pandas

@@ -40,16 +40,16 @@ class ImageEmbedding (nn.Module):
         self.embedding = base_model
 
         self.projection = nn.Sequential (
-            nn.Linear (in_features=internal_embedding_size, out_features=embedding_size),
-            nn.ReLU (),
-            nn.Linear (in_features=embedding_size, out_features=embedding_size)
+            nn.Linear(in_features=internal_embedding_size, out_features=embedding_size),
+            nn.ReLU(),
+            nn.Linear(in_features=embedding_size, out_features=embedding_size)
         )
 
     def calculate_embedding(self, image):
-        return self.embedding (image)
+        return self.embedding(image)
 
     def forward(self, X):
         image = X
-        embedding = self.calculate_embedding (image)
-        projection = self.projection (embedding)
+        embedding = self.calculate_embedding(image)
+        projection = self.projection(embedding)
         return embedding, projection
