@@ -29,7 +29,7 @@ from torch import nn
 import torch.nn.functional as F
 
 
-class ContarastiveLossELI5(nn.Module):
+class ContrastiveLossELI5(nn.Module):
     def __init__(self, batch_size, temperature=0.5, verbose=True):
         super().__init__()
         self.batch_size = batch_size
@@ -41,16 +41,23 @@ class ContarastiveLossELI5(nn.Module):
         Notes:
             {embedding_i and embedding_j} are batches of embeddings,
             where corresponding indices are pairs {z_i, z_j} as in SimCLR paper
+
+        Args:
+            embedding_i: batch projection of images after the first augmentation
+            embedding_j: batch projection of images after the second augmentation
         """
 
         z_i, z_j = F.normalize(embedding_i, dim=1), F.normalize(embedding_j, dim=1)
 
+        # representations are concatenated together in order to efficiently calculate
+        # cosine similarities between each image pair.
         representations = torch.cat([z_i, z_j], dim=0)
         similarity_matrix = F.cosine_similarity(representations.unsqueeze(1),
                                                 representations.unsqueeze(0),
                                                 dim=2)
         if self.verbose:
             print('Similarity Matrix\n', similarity_matrix, '\n')
+
 
         def loss_ij(i, j):
             z_i_, z_j_ = representations[i], representations[j]
@@ -76,8 +83,18 @@ class ContarastiveLossELI5(nn.Module):
 
             return loss_i_j.squeeze(0)
 
+        # final loss for the batch is computed as an arithmetic
+        # mean of all combinations of positive examples
         N = self.batch_size
         loss = 0.0
         for k in range(0, N):
             loss += loss_ij(k, k + N) + loss_ij(k + N, k)
         return 1.0 / (2 * N) * loss
+
+
+I = torch.tensor([[1.0, 2.0], [3.0, -2.0], [1.0, 5.0]])
+print(I)
+J = torch.tensor([[1.0, 0.75], [2.8, -1.75], [1.0, 4.7]])
+print(J)
+loss_eli5 = ContrastiveLossELI5(batch_size=3, temperature=1.0, verbose=True)
+loss_eli5(I, J)
