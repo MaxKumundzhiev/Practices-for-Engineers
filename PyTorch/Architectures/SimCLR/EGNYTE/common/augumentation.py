@@ -118,7 +118,13 @@ class PretrainingDatasetWrapper(Dataset):
 stl10_unlabeled = STL10(".", split="unlabeled", download=False)
 ds = PretrainingDatasetWrapper(stl10_unlabeled, debug=False)
 
-import matplotlib.pyplot as plt
-plt.imshow(tvf.to_pil_image(ds[123][0][0]))
-plt.show()
+# Sample visualisation
+# import matplotlib.pyplot as plt
+# plt.imshow(tvf.to_pil_image(ds[1][0][0])) # augmented
+# plt.imshow(tvf.to_pil_image(ds.raw(1)[0][0])) # original
+# plt.show()
+
+
+
+
 
