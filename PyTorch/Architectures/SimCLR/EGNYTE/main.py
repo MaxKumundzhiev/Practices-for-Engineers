@@ -81,7 +81,7 @@ class ImageEmbeddingModule (pl.LightningModule):
             return {"val_loss": loss, "log": {"val_loss": loss}}
 
     def configure_optimizers(self):
-        optimizer = RMSprop (self.model.parameters (), lr=self.hparams.lr)
+        optimizer = RMSprop(self.model.parameters (), lr=self.hparams.lr)
         return [optimizer], []
 
 

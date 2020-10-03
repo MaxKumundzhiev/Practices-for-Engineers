@@ -13,7 +13,7 @@ import torch.nn.functional as F
 
 
 class ContrastiveLoss(nn.Module):
-    def __init__(self, batch_size, temperature):
+    def __init__(self, batch_size, temperature=0.5):
         self.batch_size = batch_size
         self.register_buffer("temperature", torch.tensor(temperature))
         self.register_buffer("negatives_mask", (~torch.eye(batch_size * 2,
