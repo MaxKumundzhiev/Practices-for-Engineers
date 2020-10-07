@@ -7,31 +7,13 @@
 # github: https://github.com/KumundzhievMaxim
 # -------------------------------------------
 
-import os
-import time
-import shutil
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-from skimage import io
-from skimage.color import lab2rgb, rgb2lab, rgb2gray
-
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
-
 import torchvision.models as models
-from torchvision import datasets, transforms
-
-
-# Check if GPU is available
-use_gpu = torch.cuda.is_available()
 
 
 class ColorNet(nn.Module):
     def __init__(self, input_size=128):
-        super(ColorNet).__init__()
+        super(ColorNet, self).__init__()
         mid_level_feature_size = 128
 
         resnet = models.resnet18(num_classes=365)
