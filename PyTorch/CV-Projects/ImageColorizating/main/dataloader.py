@@ -8,8 +8,6 @@
 # -------------------------------------------
 
 import numpy as np
-
-from skimage import io
 from skimage.color import rgb2lab, rgb2gray
 
 import torch
@@ -22,7 +20,7 @@ class GrayscaleImageFolder(datasets.ImageFolder):
         img = self.loader(path)
 
         if self.transform is not None:
-            img_original = self.transform (img)
+            img_original = self.transform(img)
             img_original = np.asarray(img_original)
             img_lab = rgb2lab(img_original)
             img_lab = (img_lab + 128) / 255

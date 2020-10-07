@@ -22,19 +22,21 @@ class ColorNet(nn.Module):
 
         self.upsample = nn.Sequential(
             nn.Conv2d(mid_level_feature_size, 128, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(128),
-            nn.ReLU(),
-            nn.Upsample(scale_factor=2),
-            nn.ReLU(),
-            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(),
-            nn.Upsample(scale_factor=2),
-            nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(32),
-            nn.ReLU(),
-            nn.Conv2d(32, 2, kernel_size=3, stride=1, padding=1),
-            nn.Upsample(scale_factor=2)
+            nn.BatchNorm2d (128),
+            nn.ReLU (),
+            nn.Upsample (scale_factor=2),
+            nn.Conv2d (128, 64, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d (64),
+            nn.ReLU (),
+            nn.Conv2d (64, 64, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d (64),
+            nn.ReLU (),
+            nn.Upsample (scale_factor=2),
+            nn.Conv2d (64, 32, kernel_size=3, stride=1, padding=1),
+            nn.BatchNorm2d (32),
+            nn.ReLU (),
+            nn.Conv2d (32, 2, kernel_size=3, stride=1, padding=1),
+            nn.Upsample (scale_factor=2)
         )
 
     def forward(self, input):
