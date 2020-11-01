@@ -144,3 +144,5 @@ cython_debug/
 # data
 prod/data
 
+# csv
+*.csv

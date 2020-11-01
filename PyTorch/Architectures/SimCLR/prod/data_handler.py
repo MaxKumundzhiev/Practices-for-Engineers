@@ -1,8 +1,12 @@
 import os
+from typing import List, Dict
+
 
 import pandas as pd
 from tqdm import tqdm
-from typing import List, Dict
+import nibabel as nib
+from nilearn import plotting
+import matplotlib.pyplot as plt
 
 ROOT_DATASET_FOLDER = './data'
 
@@ -41,12 +45,30 @@ def process_folders(paths: List[str]):
         )
     return rows, failed_folders
 
-if __name__ == "__main__":
-    annotated_data_path = f'{ROOT_DATASET_FOLDER}/annotated_data/slicer'
-    folders = sorted (os.listdir (annotated_data_path))
 
-    # rows, failed_folders = process_folders(paths = folders)
-    # print('Failed folders: ', failed_folders)
 
-    df = pd.DataFrame(rows)
-    print(df)
+# original images <- .nii extencion
+data = pd.read_csv('patient_images.csv')
+original_images = data['Original Image path'].values
+
+for image in original_images:
+    if image
+    img = nib.load(image)
+    print(img)
+    # width =
+    # height =
+    # resolution =
+    # image_content =
+
+# if __name__ == "__main__":
+#     annotated_data_path = f'{ROOT_DATASET_FOLDER}/annotated_data/slicer'
+#     folders = sorted (os.listdir (annotated_data_path))
+#
+#     # rows, failed_folders = process_folders(paths = folders)
+#     # print('Failed folders: ', failed_folders)
+#     # df = pd.DataFrame(rows)
+#     # df.to_csv ('patient_images.csv')
+#
+#     data = pd.read_csv('patient_images.csv')
+
+
