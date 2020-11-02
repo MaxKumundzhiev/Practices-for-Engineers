@@ -8,9 +8,8 @@
 # -------------------------------------------
 
 
-array_len = 2
-array = [1, 3, 2]
-
+array_len = 4
+array = [4, 3, 1, 2]
 swaps = 0
 
 for i in range(array_len-1):
@@ -23,12 +22,17 @@ print(array)
 print(swaps)
 
 
-while True:
-    swapFlag = False
-    for i in range(array_len-1):
-        if array[i] > array[i+1]:
-            array[i], array[i+1] = array[i+1], array[i]
-            swaps += 1
-            swapFlag = True
-    if not swapFlag:
-        break
+
+
+# while True:
+#     swapFlag = False
+#     for i in range(array_len-1):
+#         if array[i] > array[i+1]:
+#             array[i], array[i+1] = array[i+1], array[i]
+#             swaps += 1
+#             swapFlag = True
+#     if not swapFlag:
+#         break
+
+# print(array)
+# print(swaps)
