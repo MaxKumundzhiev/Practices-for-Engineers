@@ -46,19 +46,30 @@ def process_folders(paths: List[str]):
     return rows, failed_folders
 
 
+def plot_nii_image(image_path: str):
+    Nifti_img  = nib.load(image_path)
+    nii_data = Nifti_img.get_fdata()
+    nii_aff  = Nifti_img.affine
+    nii_hdr  = Nifti_img.header
+    print(nii_aff ,'\n',nii_hdr)
+    print(nii_data.shape)
+    if(len(nii_data.shape)==3):
+        for slice_Number in range(nii_data.shape[2]):
+            plt.imshow(nii_data[:,:,slice_Number ])
+            plt.show()
+    if(len(nii_data.shape)==4):
+        for frame in range(nii_data.shape[3]):
+            for slice_Number in range(nii_data.shape[2]):
+                plt.imshow(nii_data[:,:,slice_Number,frame])
+                plt.show()
 
 # original images <- .nii extencion
 data = pd.read_csv('patient_images.csv')
 original_images = data['Original Image path'].values
 
-for image in original_images:
-    if image
-    img = nib.load(image)
-    print(img)
-    # width =
-    # height =
-    # resolution =
-    # image_content =
+path = original_images[1]
+
+
 
 # if __name__ == "__main__":
 #     annotated_data_path = f'{ROOT_DATASET_FOLDER}/annotated_data/slicer'
