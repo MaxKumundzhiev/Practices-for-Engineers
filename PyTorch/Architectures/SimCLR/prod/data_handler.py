@@ -10,16 +10,19 @@ import matplotlib.pyplot as plt
 
 ROOT_DATASET_FOLDER = './data'
 
-def process_folders(paths: List[str]):
+def create_patients_df(paths: List[str]):
     """Iterating over each folder:
         - rename original and segmented images
         - collect original and segmented images paths
         - count faild folders paths, where:
             faild folders <- missing one of [original | segmented] images
 
+    Notes:
+        list of patients_df columns:
+            [original_path, segmented_path]
+
     Returns:
-        rows List[Dict]: Original and Segmented images paths
-        failed_folders: paths of folder whcih misses one of [original | segmented] images
+        patients_df (pd.DataFrame): summarizing patients dataframe 
     """
 
     rows, failed_folders = [], []
@@ -39,11 +42,57 @@ def process_folders(paths: List[str]):
 
         rows.append(
             {
-                'Original Image path': f'{patient_folder_path}/{new_image_name}',
-                'Segmented Image path': f'{patient_folder_path}/{new_segmentation_name}'
+                'original_path': f'{patient_folder_path}/{new_image_name}',
+                'segmented_path': f'{patient_folder_path}/{new_segmentation_name}'
             }
         )
-    return rows, failed_folders
+    patients_df = pd.DataFrame(rows)
+    patients_df.to_csv('patients_df.csv')
+
+    return patients_df, failed_folders
+
+
+
+def create_nii_df(patients_df: pd.DataFrame):
+    original_images = patients_df['original_path'].values
+    images_amount = len(original_images) 
+    print(f'Read Patients DataFrame. Amount of images to process: {images_amount}')
+    nii_df = pd.DataFrame(columns=["image_id", "image_path", "image_context", "image_resolution", "slices_number"])
+
+    for image_id, image_path in enumerate(tqdm(original_images)):
+        print(f'Processing image {image_id}/{images_amount}')
+
+        try:
+            image = nib.load(image_path)
+            image_data = image.get_fdata() # (128, 128, 54), where 54 denotes number of slices reiled to the image
+            image_channels = len(image_data.shape)
+        except Exception as e:
+            print(f'[SILENCED] Error: {e} occured for {image_id}')
+            continue
+        
+        slices_number = image_data.shape[2] # e.g.: 54
+        width, height = image_data.shape[0], image_data.shape[1] # e.g.: 128, 128
+        resolution = f'{width}*{height}' 
+    
+        rows = []
+        if image_channels == 3:
+            for slice_number in range(slices_number):
+                image_context = image_data[:, : ,slice_number]
+                buffer_row = {
+                    'image_id': image_id,
+                    'image_path': image_path,
+                    'image_context': image_context,
+                    'image_resolution': resolution,
+                    'slices_number': slices_number
+                }
+                rows.append(buffer_row)
+        else:
+            continue
+
+        nii_df = pd.DataFrame(rows)
+    nii_df.to_csv('./nii_images.csv')
+
+    return nii_df
 
 
 def plot_nii_image(image_path: str):
@@ -51,8 +100,6 @@ def plot_nii_image(image_path: str):
     nii_data = Nifti_img.get_fdata()
     nii_aff  = Nifti_img.affine
     nii_hdr  = Nifti_img.header
-    print(nii_aff ,'\n',nii_hdr)
-    print(nii_data.shape)
     if(len(nii_data.shape)==3):
         for slice_Number in range(nii_data.shape[2]):
             plt.imshow(nii_data[:,:,slice_Number ])
@@ -63,23 +110,13 @@ def plot_nii_image(image_path: str):
                 plt.imshow(nii_data[:,:,slice_Number,frame])
                 plt.show()
 
-# original images <- .nii extencion
-data = pd.read_csv('patient_images.csv')
-original_images = data['Original Image path'].values
-
-path = original_images[1]
 
 
+if __name__ == "__main__":
+    annotated_data_path = f'{ROOT_DATASET_FOLDER}/annotated_data/slicer'
+    folders = sorted(os.listdir(annotated_data_path))
 
-# if __name__ == "__main__":
-#     annotated_data_path = f'{ROOT_DATASET_FOLDER}/annotated_data/slicer'
-#     folders = sorted (os.listdir (annotated_data_path))
-#
-#     # rows, failed_folders = process_folders(paths = folders)
-#     # print('Failed folders: ', failed_folders)
-#     # df = pd.DataFrame(rows)
-#     # df.to_csv ('patient_images.csv')
-#
-#     data = pd.read_csv('patient_images.csv')
-
+    patients_df, failed_folders = create_patients_df(paths=folders)
+    nii_df = create_nii_df(patients_df)
+    
 
