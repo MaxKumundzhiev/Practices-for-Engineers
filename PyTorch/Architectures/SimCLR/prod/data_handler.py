@@ -4,8 +4,12 @@ from typing import List, Dict
 
 import pandas as pd
 from tqdm import tqdm
+
+import cv2
+import nrrd  
 import nibabel as nib
 from nilearn import plotting
+
 import matplotlib.pyplot as plt
 
 ROOT_DATASET_FOLDER = './data'
@@ -26,7 +30,7 @@ def create_patients_df(paths: List[str]):
     """
 
     rows, failed_folders = [], []
-    for folder_index, folder in enumerate(tqdm(folders)):
+    for folder_index, folder in enumerate(tqdm(paths)):
         patient_folder_path = os.path.join(annotated_data_path, folder)
         content = os.listdir(patient_folder_path)
 
@@ -111,12 +115,59 @@ def plot_nii_image(image_path: str):
                 plt.show()
 
 
+def create_nrrd_df(patients_df: pd.DataFrame):
+    segmented_images = patients_df['segmented_path'].values
+    images_amount = len(segmented_images) 
+    print(f'Read Patients DataFrame. Amount of images to process: {images_amount}')
+    nrrd_df = pd.DataFrame(columns=["image_id", "image_path", "image_context", "image_resolution", "slices_number"])
+
+    for image_id, image_path in enumerate(tqdm(segmented_images)):
+        print(f'Processing image {image_id}/{images_amount}')
+
+        try:
+            image_data, _ = nrrd.read(image_path)
+            image_channels = len(image_data.shape)
+        except Exception as e:
+            # skipping unexisting segmented images
+            print(f'[SILENCED] Error: {e} occured for {image_id}')
+            continue
+        
+        slices_number = image_data.shape[2] # e.g.: 54
+        width, height = image_data.shape[0], image_data.shape[1] # e.g.: 128, 128
+        resolution = f'{width}*{height}' 
+    
+        rows = []
+        if image_channels == 3:
+            for slice_number in range(slices_number):
+                image_context = image_data[:, : ,slice_number]
+                buffer_row = {
+                    'image_id': image_id,
+                    'image_path': image_path,
+                    'image_context': image_context,
+                    'image_resolution': resolution,
+                    'slices_number': slices_number
+                }
+                rows.append(buffer_row)
+        else:
+            continue
+
+        nrrd_df = pd.DataFrame(rows)
+    nrrd_df.to_csv('./nrrd_images.csv')
+
+    return nrrd_df
 
 if __name__ == "__main__":
     annotated_data_path = f'{ROOT_DATASET_FOLDER}/annotated_data/slicer'
-    folders = sorted(os.listdir(annotated_data_path))
+    paths = sorted(os.listdir(annotated_data_path))
 
-    patients_df, failed_folders = create_patients_df(paths=folders)
+    patients_df, failed_folders = create_patients_df(paths=paths)
     nii_df = create_nii_df(patients_df)
+    nrrd_df = create_nrrd_df(patients_df)
+    
+    
+    
+    
+
+        
     
 
