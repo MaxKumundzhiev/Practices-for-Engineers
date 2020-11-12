@@ -93,7 +93,7 @@ def create_nii_df(patients_df: pd.DataFrame):
         else:
             continue
 
-        nii_df = pd.DataFrame(rows)
+    nii_df = pd.DataFrame(rows)
     nii_df.to_csv('./nii_images.csv')
 
     return nii_df
@@ -143,7 +143,7 @@ def create_nrrd_df(patients_df: pd.DataFrame):
                 buffer_row = {
                     'image_id': image_id,
                     'image_path': image_path,
-                    'image_context': image_context,
+                    'image_context': int(image_context),
                     'image_resolution': resolution,
                     'slices_number': slices_number
                 }
@@ -151,7 +151,7 @@ def create_nrrd_df(patients_df: pd.DataFrame):
         else:
             continue
 
-        nrrd_df = pd.DataFrame(rows)
+    nrrd_df = pd.DataFrame(rows)
     nrrd_df.to_csv('./nrrd_images.csv')
 
     return nrrd_df

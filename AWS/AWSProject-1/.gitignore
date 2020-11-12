@@ -1,0 +1,4 @@
+.idea
+
+# any permission remote machines ssh keys
+*.pem
