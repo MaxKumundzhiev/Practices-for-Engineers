@@ -1,0 +1,10 @@
+{
+  "name": "batch-holopix-processing",
+  "description": "",
+  "version": "0.1.0",
+  "dependencies": {},
+  "devDependencies": {
+    "serverless-aws-batch": "^1.0.7",
+    "serverless-python-requirements": "^5.1.0"
+  }
+}

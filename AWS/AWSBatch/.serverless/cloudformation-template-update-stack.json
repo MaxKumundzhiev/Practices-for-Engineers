@@ -1,0 +1,1321 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "ServerlessDeploymentBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "ServerlessDeploymentBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "ServerlessDeploymentBucket"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "ServerlessDeploymentBucket"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": false
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "ECRRepository": {
+      "Type": "AWS::ECR::Repository",
+      "Properties": {
+        "LifecyclePolicy": {
+          "LifecyclePolicyText": "{\"rules\":[{\"rulePriority\":1,\"description\":\"Remove untagged images\",\"selection\":{\"tagStatus\":\"untagged\",\"countType\":\"sinceImagePushed\",\"countUnit\":\"days\",\"countNumber\":1},\"action\":{\"type\":\"expire\"}}]}"
+        },
+        "RepositoryName": "batch-holopix-processing-v1"
+      }
+    },
+    "GetHandlerLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/batch-holopix-processing-get-capturer"
+      }
+    },
+    "PostHandlerLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/batch-holopix-processing-post-capturer"
+      }
+    },
+    "IamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "batch-holopix-processing",
+                  "v1",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:CreateLogGroup"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/batch-holopix-processing-get-capturer:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/batch-holopix-processing-post-capturer:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/batch-holopix-processing-get-capturer:*:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/batch-holopix-processing-post-capturer:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:ListAllMyBuckets"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "batch-holopix-processing",
+              "v1",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        }
+      }
+    },
+    "IamRoleBatchService": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "BatchServiceRole-eu-west-1-v1-batch-holopix-processing",
+        "Path": "/",
+        "AssumeRolePolicyDocument": {
+          "Version": "2008-10-17",
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "batch.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole"
+        ]
+      }
+    },
+    "IamRoleBatchInstanceManagement": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "BatchInstanceRole-eu-west-1-v1-batch-holopix-processing",
+        "Path": "/",
+        "AssumeRolePolicyDocument": {
+          "Version": "2008-10-17",
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+        ]
+      }
+    },
+    "IamProfileBatchInstanceManagement": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          {
+            "Ref": "IamRoleBatchInstanceManagement"
+          }
+        ]
+      }
+    },
+    "IamRoleBatchSpotFleetManagement": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "BatchSpotFleetRole-eu-west-1-v1-batch-holopix-processing",
+        "Path": "/",
+        "AssumeRolePolicyDocument": {
+          "Version": "2008-10-17",
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "spotfleet.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole"
+        ]
+      }
+    },
+    "IamRoleLambdaScheduleExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "BatchScheduleRole-eu-west-1-v1-batch-holopix-processing",
+        "Path": "/",
+        "AssumeRolePolicyDocument": {
+          "Version": "2008-10-17",
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "lambda-schedule-execution-policies",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "batch:SubmitJob"
+                  ],
+                  "Resource": [
+                    {
+                      "Ref": "BatchJobQueue"
+                    },
+                    "arn:aws:batch:*:*:job-definition/*:*"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "BatchJobQueue": {
+      "Type": "AWS::Batch::JobQueue",
+      "Properties": {
+        "JobQueueName": "batch-holopix-processing-v1-JobQueue",
+        "Priority": 1,
+        "ComputeEnvironmentOrder": [
+          {
+            "ComputeEnvironment": {
+              "Ref": "BatchComputeEnvironment"
+            },
+            "Order": 1
+          }
+        ]
+      }
+    },
+    "BatchComputeEnvironment": {
+      "Type": "AWS::Batch::ComputeEnvironment",
+      "Properties": {
+        "ComputeEnvironmentName": "batch-holopix-processing-v1-ComputeEnvironment-751499",
+        "ServiceRole": {
+          "Fn::GetAtt": [
+            "IamRoleBatchService",
+            "Arn"
+          ]
+        },
+        "Type": "MANAGED",
+        "ComputeResources": {
+          "Type": "SPOT",
+          "InstanceRole": {
+            "Fn::GetAtt": [
+              "IamProfileBatchInstanceManagement",
+              "Arn"
+            ]
+          },
+          "SpotIamFleetRole": {
+            "Fn::GetAtt": [
+              "IamRoleBatchSpotFleetManagement",
+              "Arn"
+            ]
+          },
+          "InstanceTypes": [
+            "t2.micro"
+          ],
+          "MinvCpus": 0,
+          "MaxvCpus": 1,
+          "Tags": {
+            "Name": "batch-holopix-processing"
+          },
+          "BidPercentage": 100,
+          "SecurityGroupIds": [
+            {
+              "Ref": "AllowAllSecurityGroup"
+            }
+          ],
+          "Subnets": [
+            {
+              "Ref": "PublicSubnet"
+            }
+          ]
+        }
+      }
+    },
+    "JobDefinitionPostHandler": {
+      "Type": "AWS::Batch::JobDefinition",
+      "Properties": {
+        "JobDefinitionName": "batch-holopix-processing-v1-postHandler",
+        "Type": "container",
+        "ContainerProperties": {
+          "Memory": 2048,
+          "Vcpus": 1,
+          "Command": [
+            "batch-holopix-processing/postHandler.capture_post",
+            "Ref::event"
+          ],
+          "Image": "554852140101.dkr.ecr.eu-west-1.amazonaws.com/batch-holopix-processing-v1:latest",
+          "JobRoleArn": {
+            "Ref": "IamRoleBatchJobExecutionPostHandler"
+          },
+          "Environment": [
+            {
+              "Name": "AWS_LAMBDA_FUNCTION_TIMEOUT",
+              "Value": 3600
+            },
+            {
+              "Name": "AWS_LAMBDA_FUNCTION_MEMORY_SIZE",
+              "Value": 2048
+            },
+            {
+              "Name": "AWS_REGION",
+              "Value": "eu-west-1"
+            }
+          ]
+        },
+        "RetryStrategy": {
+          "Attempts": 1
+        },
+        "Timeout": {
+          "AttemptDurationSeconds": 3600
+        }
+      }
+    },
+    "IamRoleBatchJobExecutionPostHandler": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "BatchJobRole-postHandler-eu-west-1-v1-batch-holopix-processing",
+        "Path": "/",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "batch-job-execution-policies",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:ListAllMyBuckets"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "GetHandlerLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/batch-holopix-processing/v1/1605806895881-2020-11-19T17:28:15.881Z/batch-holopix-processing.zip"
+        },
+        "FunctionName": "batch-holopix-processing-get-capturer",
+        "Handler": "getHandler.capture_get",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.8",
+        "Timeout": 6
+      },
+      "DependsOn": [
+        "GetHandlerLogGroup"
+      ]
+    },
+    "GetHandlerLambdaVersionhMCZr7Gvq4qi30NiAacdnD8VJln5VpcBuevrrCM": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "GetHandlerLambdaFunction"
+        },
+        "CodeSha256": "N8kIJGh0X2oO8tjwChZJ7qO5bYrlp7xJLDkvMgNcNOA="
+      }
+    },
+    "PostHandlerLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/batch-holopix-processing/v1/1605806895881-2020-11-19T17:28:15.881Z/postHandler.zip"
+        },
+        "FunctionName": "batch-holopix-processing-post-capturer",
+        "Handler": "handler.schedule",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaScheduleExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs10.x",
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "EVENT_LOGGING_ENABLED": false,
+            "FUNCTION_NAME": "postHandler",
+            "JOB_DEFINITION_ARN": {
+              "Ref": "JobDefinitionPostHandler"
+            },
+            "JOB_QUEUE_ARN": {
+              "Ref": "BatchJobQueue"
+            }
+          }
+        }
+      },
+      "DependsOn": [
+        "PostHandlerLogGroup",
+        "IamRoleLambdaScheduleExecution"
+      ]
+    },
+    "PostHandlerLambdaVersion4q6BHC4dnG8PgG826kq8aNmZ7rzpBmAXxz1XcZxJuvI": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "PostHandlerLambdaFunction"
+        },
+        "CodeSha256": "kzxn/ZZQjXKQFYcGkUSFvV/pirLDcfjawNDPKHyhUms="
+      }
+    },
+    "ApiGatewayRestApi": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": "v1-batch-holopix-processing",
+        "EndpointConfiguration": {
+          "Types": [
+            "REGIONAL"
+          ]
+        },
+        "Policy": ""
+      }
+    },
+    "ApiGatewayResourceJobs": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "jobs",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceJob": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "job",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceJobJobDashidVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceJob"
+        },
+        "PathPart": "{job-id}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodJobsGet": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceJobs"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "GetHandlerLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          },
+          "PassthroughBehavior": "NEVER",
+          "RequestTemplates": {
+            "application/json": "\n    #set( $body = $input.json(\"$\") )\n\n    \n  #define( $loop )\n    {\n    #foreach($key in $map.keySet())\n        #set( $k = $util.escapeJavaScript($key) )\n        #set( $v = $util.escapeJavaScript($map.get($key)).replaceAll(\"\\\\'\", \"'\") )\n        \"$k\":\n          \"$v\"\n          #if( $foreach.hasNext ) , #end\n    #end\n    }\n  #end\n\n  {\n    \"body\": $body,\n    \"method\": \"$context.httpMethod\",\n    \"principalId\": \"$context.authorizer.principalId\",\n    \"stage\": \"$context.stage\",\n\n    \"cognitoPoolClaims\" : {\n       \n       \"sub\": \"$context.authorizer.claims.sub\"\n    },\n\n    #set( $map = $context.authorizer )\n    \"enhancedAuthContext\": $loop,\n\n    #set( $map = $input.params().header )\n    \"headers\": $loop,\n\n    #set( $map = $input.params().querystring )\n    \"query\": $loop,\n\n    #set( $map = $input.params().path )\n    \"path\": $loop,\n\n    #set( $map = $context.identity )\n    \"identity\": $loop,\n\n    #set( $map = $stageVariables )\n    \"stageVariables\": $loop,\n\n    \"requestPath\": \"$context.resourcePath\"\n  }\n\n  ",
+            "application/x-www-form-urlencoded": "\n    #define( $body )\n      {\n      #foreach( $token in $input.path('$').split('&') )\n        #set( $keyVal = $token.split('=') )\n        #set( $keyValSize = $keyVal.size() )\n        #if( $keyValSize >= 1 )\n          #set( $key = $util.escapeJavaScript($util.urlDecode($keyVal[0])) )\n          #if( $keyValSize >= 2 )\n            #set($val = $util.escapeJavaScript($util.urlDecode($keyVal[1])).replaceAll(\"\\\\'\",\"'\"))\n          #else\n            #set( $val = '' )\n          #end\n          \"$key\": \"$val\"#if($foreach.hasNext),#end\n        #end\n      #end\n      }\n    #end\n\n    \n  #define( $loop )\n    {\n    #foreach($key in $map.keySet())\n        #set( $k = $util.escapeJavaScript($key) )\n        #set( $v = $util.escapeJavaScript($map.get($key)).replaceAll(\"\\\\'\", \"'\") )\n        \"$k\":\n          \"$v\"\n          #if( $foreach.hasNext ) , #end\n    #end\n    }\n  #end\n\n  {\n    \"body\": $body,\n    \"method\": \"$context.httpMethod\",\n    \"principalId\": \"$context.authorizer.principalId\",\n    \"stage\": \"$context.stage\",\n\n    \"cognitoPoolClaims\" : {\n       \n       \"sub\": \"$context.authorizer.claims.sub\"\n    },\n\n    #set( $map = $context.authorizer )\n    \"enhancedAuthContext\": $loop,\n\n    #set( $map = $input.params().header )\n    \"headers\": $loop,\n\n    #set( $map = $input.params().querystring )\n    \"query\": $loop,\n\n    #set( $map = $input.params().path )\n    \"path\": $loop,\n\n    #set( $map = $context.identity )\n    \"identity\": $loop,\n\n    #set( $map = $stageVariables )\n    \"stageVariables\": $loop,\n\n    \"requestPath\": \"$context.resourcePath\"\n  }\n\n  "
+          },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "SelectionPattern": "",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "400",
+              "SelectionPattern": "[\\s\\S]*\\[400\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "401",
+              "SelectionPattern": "[\\s\\S]*\\[401\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "403",
+              "SelectionPattern": "[\\s\\S]*\\[403\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "404",
+              "SelectionPattern": "[\\s\\S]*\\[404\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "422",
+              "SelectionPattern": "[\\s\\S]*\\[422\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "500",
+              "SelectionPattern": "[\\s\\S]*(Process\\s?exited\\s?before\\s?completing\\s?request|\\[500\\])[\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "502",
+              "SelectionPattern": "[\\s\\S]*\\[502\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "504",
+              "SelectionPattern": "([\\s\\S]*\\[504\\][\\s\\S]*)|(.*Task timed out after \\d+\\.\\d+ seconds$)",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            }
+          ]
+        },
+        "MethodResponses": [
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "200"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "400"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "401"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "403"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "404"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "422"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "500"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "502"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "504"
+          }
+        ]
+      }
+    },
+    "ApiGatewayMethodJobJobDashidVarGet": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceJobJobDashidVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "GetHandlerLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          },
+          "PassthroughBehavior": "NEVER",
+          "RequestTemplates": {
+            "application/json": "\n    #set( $body = $input.json(\"$\") )\n\n    \n  #define( $loop )\n    {\n    #foreach($key in $map.keySet())\n        #set( $k = $util.escapeJavaScript($key) )\n        #set( $v = $util.escapeJavaScript($map.get($key)).replaceAll(\"\\\\'\", \"'\") )\n        \"$k\":\n          \"$v\"\n          #if( $foreach.hasNext ) , #end\n    #end\n    }\n  #end\n\n  {\n    \"body\": $body,\n    \"method\": \"$context.httpMethod\",\n    \"principalId\": \"$context.authorizer.principalId\",\n    \"stage\": \"$context.stage\",\n\n    \"cognitoPoolClaims\" : {\n       \n       \"sub\": \"$context.authorizer.claims.sub\"\n    },\n\n    #set( $map = $context.authorizer )\n    \"enhancedAuthContext\": $loop,\n\n    #set( $map = $input.params().header )\n    \"headers\": $loop,\n\n    #set( $map = $input.params().querystring )\n    \"query\": $loop,\n\n    #set( $map = $input.params().path )\n    \"path\": $loop,\n\n    #set( $map = $context.identity )\n    \"identity\": $loop,\n\n    #set( $map = $stageVariables )\n    \"stageVariables\": $loop,\n\n    \"requestPath\": \"$context.resourcePath\"\n  }\n\n  ",
+            "application/x-www-form-urlencoded": "\n    #define( $body )\n      {\n      #foreach( $token in $input.path('$').split('&') )\n        #set( $keyVal = $token.split('=') )\n        #set( $keyValSize = $keyVal.size() )\n        #if( $keyValSize >= 1 )\n          #set( $key = $util.escapeJavaScript($util.urlDecode($keyVal[0])) )\n          #if( $keyValSize >= 2 )\n            #set($val = $util.escapeJavaScript($util.urlDecode($keyVal[1])).replaceAll(\"\\\\'\",\"'\"))\n          #else\n            #set( $val = '' )\n          #end\n          \"$key\": \"$val\"#if($foreach.hasNext),#end\n        #end\n      #end\n      }\n    #end\n\n    \n  #define( $loop )\n    {\n    #foreach($key in $map.keySet())\n        #set( $k = $util.escapeJavaScript($key) )\n        #set( $v = $util.escapeJavaScript($map.get($key)).replaceAll(\"\\\\'\", \"'\") )\n        \"$k\":\n          \"$v\"\n          #if( $foreach.hasNext ) , #end\n    #end\n    }\n  #end\n\n  {\n    \"body\": $body,\n    \"method\": \"$context.httpMethod\",\n    \"principalId\": \"$context.authorizer.principalId\",\n    \"stage\": \"$context.stage\",\n\n    \"cognitoPoolClaims\" : {\n       \n       \"sub\": \"$context.authorizer.claims.sub\"\n    },\n\n    #set( $map = $context.authorizer )\n    \"enhancedAuthContext\": $loop,\n\n    #set( $map = $input.params().header )\n    \"headers\": $loop,\n\n    #set( $map = $input.params().querystring )\n    \"query\": $loop,\n\n    #set( $map = $input.params().path )\n    \"path\": $loop,\n\n    #set( $map = $context.identity )\n    \"identity\": $loop,\n\n    #set( $map = $stageVariables )\n    \"stageVariables\": $loop,\n\n    \"requestPath\": \"$context.resourcePath\"\n  }\n\n  "
+          },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "SelectionPattern": "",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "400",
+              "SelectionPattern": "[\\s\\S]*\\[400\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "401",
+              "SelectionPattern": "[\\s\\S]*\\[401\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "403",
+              "SelectionPattern": "[\\s\\S]*\\[403\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "404",
+              "SelectionPattern": "[\\s\\S]*\\[404\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "422",
+              "SelectionPattern": "[\\s\\S]*\\[422\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "500",
+              "SelectionPattern": "[\\s\\S]*(Process\\s?exited\\s?before\\s?completing\\s?request|\\[500\\])[\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "502",
+              "SelectionPattern": "[\\s\\S]*\\[502\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "504",
+              "SelectionPattern": "([\\s\\S]*\\[504\\][\\s\\S]*)|(.*Task timed out after \\d+\\.\\d+ seconds$)",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            }
+          ]
+        },
+        "MethodResponses": [
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "200"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "400"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "401"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "403"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "404"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "422"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "500"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "502"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "504"
+          }
+        ]
+      }
+    },
+    "ApiGatewayMethodJobsPost": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "POST",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceJobs"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "PostHandlerLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          },
+          "PassthroughBehavior": "NEVER",
+          "RequestTemplates": {
+            "application/json": "\n    #set( $body = $input.json(\"$\") )\n\n    \n  #define( $loop )\n    {\n    #foreach($key in $map.keySet())\n        #set( $k = $util.escapeJavaScript($key) )\n        #set( $v = $util.escapeJavaScript($map.get($key)).replaceAll(\"\\\\'\", \"'\") )\n        \"$k\":\n          \"$v\"\n          #if( $foreach.hasNext ) , #end\n    #end\n    }\n  #end\n\n  {\n    \"body\": $body,\n    \"method\": \"$context.httpMethod\",\n    \"principalId\": \"$context.authorizer.principalId\",\n    \"stage\": \"$context.stage\",\n\n    \"cognitoPoolClaims\" : {\n       \n       \"sub\": \"$context.authorizer.claims.sub\"\n    },\n\n    #set( $map = $context.authorizer )\n    \"enhancedAuthContext\": $loop,\n\n    #set( $map = $input.params().header )\n    \"headers\": $loop,\n\n    #set( $map = $input.params().querystring )\n    \"query\": $loop,\n\n    #set( $map = $input.params().path )\n    \"path\": $loop,\n\n    #set( $map = $context.identity )\n    \"identity\": $loop,\n\n    #set( $map = $stageVariables )\n    \"stageVariables\": $loop,\n\n    \"requestPath\": \"$context.resourcePath\"\n  }\n\n  ",
+            "application/x-www-form-urlencoded": "\n    #define( $body )\n      {\n      #foreach( $token in $input.path('$').split('&') )\n        #set( $keyVal = $token.split('=') )\n        #set( $keyValSize = $keyVal.size() )\n        #if( $keyValSize >= 1 )\n          #set( $key = $util.escapeJavaScript($util.urlDecode($keyVal[0])) )\n          #if( $keyValSize >= 2 )\n            #set($val = $util.escapeJavaScript($util.urlDecode($keyVal[1])).replaceAll(\"\\\\'\",\"'\"))\n          #else\n            #set( $val = '' )\n          #end\n          \"$key\": \"$val\"#if($foreach.hasNext),#end\n        #end\n      #end\n      }\n    #end\n\n    \n  #define( $loop )\n    {\n    #foreach($key in $map.keySet())\n        #set( $k = $util.escapeJavaScript($key) )\n        #set( $v = $util.escapeJavaScript($map.get($key)).replaceAll(\"\\\\'\", \"'\") )\n        \"$k\":\n          \"$v\"\n          #if( $foreach.hasNext ) , #end\n    #end\n    }\n  #end\n\n  {\n    \"body\": $body,\n    \"method\": \"$context.httpMethod\",\n    \"principalId\": \"$context.authorizer.principalId\",\n    \"stage\": \"$context.stage\",\n\n    \"cognitoPoolClaims\" : {\n       \n       \"sub\": \"$context.authorizer.claims.sub\"\n    },\n\n    #set( $map = $context.authorizer )\n    \"enhancedAuthContext\": $loop,\n\n    #set( $map = $input.params().header )\n    \"headers\": $loop,\n\n    #set( $map = $input.params().querystring )\n    \"query\": $loop,\n\n    #set( $map = $input.params().path )\n    \"path\": $loop,\n\n    #set( $map = $context.identity )\n    \"identity\": $loop,\n\n    #set( $map = $stageVariables )\n    \"stageVariables\": $loop,\n\n    \"requestPath\": \"$context.resourcePath\"\n  }\n\n  "
+          },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "SelectionPattern": "",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "400",
+              "SelectionPattern": "[\\s\\S]*\\[400\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "401",
+              "SelectionPattern": "[\\s\\S]*\\[401\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "403",
+              "SelectionPattern": "[\\s\\S]*\\[403\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "404",
+              "SelectionPattern": "[\\s\\S]*\\[404\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "422",
+              "SelectionPattern": "[\\s\\S]*\\[422\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "500",
+              "SelectionPattern": "[\\s\\S]*(Process\\s?exited\\s?before\\s?completing\\s?request|\\[500\\])[\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "502",
+              "SelectionPattern": "[\\s\\S]*\\[502\\][\\s\\S]*",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            },
+            {
+              "StatusCode": "504",
+              "SelectionPattern": "([\\s\\S]*\\[504\\][\\s\\S]*)|(.*Task timed out after \\d+\\.\\d+ seconds$)",
+              "ResponseParameters": {},
+              "ResponseTemplates": {}
+            }
+          ]
+        },
+        "MethodResponses": [
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "200"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "400"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "401"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "403"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "404"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "422"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "500"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "502"
+          },
+          {
+            "ResponseParameters": {},
+            "ResponseModels": {},
+            "StatusCode": "504"
+          }
+        ]
+      }
+    },
+    "ApiGatewayDeployment1605806880063": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "StageName": "v1"
+      },
+      "DependsOn": [
+        "ApiGatewayMethodJobsGet",
+        "ApiGatewayMethodJobJobDashidVarGet",
+        "ApiGatewayMethodJobsPost"
+      ]
+    },
+    "GetHandlerLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "GetHandlerLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "PostHandlerLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "PostHandlerLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "VPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.224.0.0/16",
+        "EnableDnsSupport": true,
+        "EnableDnsHostnames": true,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Batch VPC"
+          }
+        ]
+      }
+    },
+    "InternetGateway": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Batch Internet Gateway"
+          }
+        ]
+      }
+    },
+    "InternetGatewayAttachment": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "InternetGatewayId": {
+          "Ref": "InternetGateway"
+        },
+        "VpcId": {
+          "Ref": "VPC"
+        }
+      }
+    },
+    "PublicSubnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AvailabilityZone": "eu-west-1a",
+        "CidrBlock": "10.224.0.0/20",
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Batch eu-west-1a Public Subnet"
+          }
+        ]
+      }
+    },
+    "PublicRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "Batch Public Routes"
+          }
+        ]
+      }
+    },
+    "DefaultPublicRoute": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "InternetGatewayAttachment",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "PublicRouteTable"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "InternetGateway"
+        }
+      }
+    },
+    "PublicSubnetRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "PublicRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "PublicSubnet"
+        }
+      }
+    },
+    "PublicNetworkAcl": {
+      "Type": "AWS::EC2::NetworkAcl",
+      "DependsOn": "VPC",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "AWS Batch Public ACL"
+          }
+        ]
+      }
+    },
+    "InboundPublicNetworkAclAllowAll": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "PublicNetworkAcl"
+        },
+        "RuleNumber": 100,
+        "Protocol": -1,
+        "RuleAction": "allow",
+        "Egress": false,
+        "CidrBlock": "0.0.0.0/0",
+        "PortRange": {
+          "From": 0,
+          "To": 65535
+        }
+      }
+    },
+    "OutboundPublicNetworkAclAllowAll": {
+      "Type": "AWS::EC2::NetworkAclEntry",
+      "Properties": {
+        "NetworkAclId": {
+          "Ref": "PublicNetworkAcl"
+        },
+        "RuleNumber": 100,
+        "Protocol": -1,
+        "RuleAction": "allow",
+        "Egress": true,
+        "CidrBlock": "0.0.0.0/0",
+        "PortRange": {
+          "From": 0,
+          "To": 65535
+        }
+      }
+    },
+    "PublicSubnetNetworkAclAssociation1": {
+      "Type": "AWS::EC2::SubnetNetworkAclAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "PublicSubnet"
+        },
+        "NetworkAclId": {
+          "Ref": "PublicNetworkAcl"
+        }
+      }
+    },
+    "AllowAllSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupName": "Batch Allow All",
+        "GroupDescription": "Security group for batch instances that allows all traffic",
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "-1",
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "SecurityGroupEgress": [
+          {
+            "IpProtocol": "-1",
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": {
+        "Ref": "ServerlessDeploymentBucket"
+      }
+    },
+    "GetHandlerLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "GetHandlerLambdaVersionhMCZr7Gvq4qi30NiAacdnD8VJln5VpcBuevrrCM"
+      }
+    },
+    "PostHandlerLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "PostHandlerLambdaVersion4q6BHC4dnG8PgG826kq8aNmZ7rzpBmAXxz1XcZxJuvI"
+      }
+    },
+    "ServiceEndpoint": {
+      "Description": "URL of the service endpoint",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "ApiGatewayRestApi"
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".",
+            {
+              "Ref": "AWS::URLSuffix"
+            },
+            "/v1"
+          ]
+        ]
+      }
+    }
+  }
+}

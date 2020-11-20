@@ -1,0 +1,197 @@
+service: batch-holopix-processing # service main name
+
+# Setup which provider to work with
+provider:
+  name: aws # denotes which provider to work with. Serverless as well works with GCP and Azure 
+  stage: v1 # stage for API GateWay 
+  region: eu-west-1 # denotes which region services will be deployed 
+  runtime: python3.8 # denotes which programming language will be used for lambdaS  
+  endpointType: REGIONAL
+  # Define our AWS Batch Compute Resource
+  batch:
+    Type: SPOT # Required
+    BidPercentage: 100 # Optional. Defaults to 100 if Type = SPOT (you always pay lowest market price)
+    SecurityGroupIds: # Required
+      - Ref: AllowAllSecurityGroup
+    Subnets: # Required
+      - Ref: PublicSubnet
+    InstanceTypes: # Optional
+      - t2.micro
+    MinvCpus: 0
+    MaxvCpus: 1
+    Tags: # Optional
+      Name: batch-holopix-processing
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:ListAllMyBuckets"
+      Resource: "*"
+
+# Setup GateWayS && LambdaS
+functions: # main keyword
+  # GET Lambda
+  getHandler: # script name <- script
+    name: batch-holopix-processing-get-capturer # lambda name
+    handler: getHandler.capture_get # script.function (function which is inside the script)
+    # GET GateWay: gonna create following routins: GET v1/jobs && GET v1/job/{job-id}
+    events:
+      - http:
+          path: /jobs
+          method: get
+          integration: lambda # we are not looking for lambda proxy
+      - http:
+          path: /job/{job-id}
+          method: get
+          integration: lambda # we are not looking for lambda proxy
+          
+  # POST Lambda
+  postHandler: # script name <- script
+    name: batch-holopix-processing-post-capturer # lambda name
+    handler: postHandler.capture_post # script.function (function which is inside the script)
+    # AWS Batch Job Definition
+    # Creates a Batch Job with 2GB of memory and 1 vCPU.
+    batch:
+      ContainerProperties:
+        Memory: 2048
+        Vcpus: 1
+      RetryStrategy:
+        Attempts: 1
+      Timeout:
+        AttemptDurationSeconds: 3600
+    # POST GateWay: gonna create following routine: POST v1/jobs
+    events:
+      - http:
+          path: /jobs
+          method: post
+          integration: lambda # we are not looking for lambda proxy
+
+plugins:
+  - serverless-aws-batch
+  - serverless-python-requirements
+
+package:
+  include:
+    - handler.py
+  exclude:
+    - .serverless/**
+    - node_modules/**
+
+# WARNING: Should not be used in production (allows all traffic)
+# VPC: "Batch VPC"
+#  - CIDR: 10.224.0.0/16
+#  - Subnet: "Batch <region>a Public Subnet"
+#    - CIDR: 10.224.0.0/20
+#    - Allows all incoming and outgoing traffic
+#  - Security Group: "Batch Allow All"
+#    - Allows all incoming and outgoing traffic
+resources:
+  Resources:
+    VPC:
+      Type: AWS::EC2::VPC
+      Properties:
+        CidrBlock: 10.224.0.0/16
+        EnableDnsSupport: true
+        EnableDnsHostnames: true
+        Tags:
+          - Key: Name
+            Value: Batch VPC
+
+    InternetGateway:
+      Type: AWS::EC2::InternetGateway
+      Properties:
+        Tags:
+          - Key: Name
+            Value: Batch Internet Gateway
+
+    InternetGatewayAttachment:
+      Type: AWS::EC2::VPCGatewayAttachment
+      Properties:
+        InternetGatewayId: !Ref InternetGateway
+        VpcId: !Ref VPC
+
+    PublicSubnet:
+      Type: AWS::EC2::Subnet
+      Properties:
+        VpcId: !Ref VPC
+        AvailabilityZone: ${self:provider.region}a
+        CidrBlock: 10.224.0.0/20
+        MapPublicIpOnLaunch: true
+        Tags:
+          - Key: Name
+            Value: Batch ${self:provider.region}a Public Subnet
+
+    PublicRouteTable:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref VPC
+        Tags:
+          - Key: Name
+            Value: Batch Public Routes
+
+    DefaultPublicRoute:
+      Type: AWS::EC2::Route
+      DependsOn: InternetGatewayAttachment
+      Properties:
+        RouteTableId: !Ref PublicRouteTable
+        DestinationCidrBlock: 0.0.0.0/0
+        GatewayId: !Ref InternetGateway
+
+    PublicSubnetRouteTableAssociation:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        RouteTableId: !Ref PublicRouteTable
+        SubnetId: !Ref PublicSubnet
+
+    PublicNetworkAcl:
+      Type: AWS::EC2::NetworkAcl
+      DependsOn: VPC
+      Properties:
+        VpcId: !Ref VPC
+        Tags:
+          - Key: Name
+            Value: AWS Batch Public ACL
+
+    InboundPublicNetworkAclAllowAll:
+      Type: AWS::EC2::NetworkAclEntry
+      Properties:
+        NetworkAclId: !Ref PublicNetworkAcl
+        RuleNumber: 100
+        Protocol: -1
+        RuleAction: allow
+        Egress: false
+        CidrBlock: 0.0.0.0/0
+        PortRange:
+          From: 0
+          To: 65535
+
+    OutboundPublicNetworkAclAllowAll:
+      Type: AWS::EC2::NetworkAclEntry
+      Properties:
+        NetworkAclId: !Ref PublicNetworkAcl
+        RuleNumber: 100
+        Protocol: -1
+        RuleAction: allow
+        Egress: true
+        CidrBlock: 0.0.0.0/0
+        PortRange:
+          From: 0
+          To: 65535
+
+    PublicSubnetNetworkAclAssociation1:
+      Type: AWS::EC2::SubnetNetworkAclAssociation
+      Properties:
+        SubnetId: !Ref PublicSubnet
+        NetworkAclId: !Ref PublicNetworkAcl
+
+    AllowAllSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupName: Batch Allow All
+        GroupDescription: "Security group for batch instances that allows all traffic"
+        VpcId: !Ref VPC
+        SecurityGroupIngress:
+          - IpProtocol: "-1"
+            CidrIp: 0.0.0.0/0
+        SecurityGroupEgress:
+          - IpProtocol: "-1"
+            CidrIp: 0.0.0.0/0
